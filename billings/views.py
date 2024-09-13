@@ -4,15 +4,16 @@ from datetime import datetime
 # Create your views here.
 
 def home (request):
-    bdata = datetime.now()
-    data = bdata.strftime("%Y-%m-%d")
-    fdata = bdata.strftime("%d/%m/%Y")
-    return render(request, 'pages/home.html', context={
+    return render(request, 'pages/home.html')
+
+def invoices (request):
+    data = datetime.now()
+    return render(request, 'pages/invoices.html', context={
         'name': 'Cleiton Santos',
         'company':'Nutribem Refeicoes LTDA',
-        'date':data,
-        'fdata':fdata
+        'data':data,
+        'id_entry': '0000280884'
     })
 
-def invoice (request):
+def invoice (request, id):
     return render(request, 'pages/invoice.html')
