@@ -1,3 +1,3 @@
-# Monitoramento Temperatura
+# Projeto: Melhoria visualização de Informações Gerenciais
 
-:computer: Software desenvolvido para auxiliar no monitoramento da Temperatura de Containers.
+:computer: Software desenvolvido para auxiliar no gerenciamento da Empresa Nutribem.
