@@ -2,4 +2,14 @@
 {% block title %}Home | {% endblock title %}
 {% block content %}
 {% include "partials/menu.html" %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="mt-2 col-3">{% include "partials/expenses.html" %}</div>
+        <div class="mt-2 col-3">{% include "partials/expenses.html" %}</div>
+        <div class="mt-2 col-3">{% include "partials/expenses.html" %}</div>
+        <div class="mt-2 col-3">{% include "partials/expenses.html" %}</div>
+        <div class="w-100"></div>
+        <div class="col-5 mt-2">{% include "partials/graphic.html" %}</div>
+    </div>
+</div>
 {% endblock content %}

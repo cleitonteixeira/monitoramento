@@ -12,7 +12,10 @@ def invoices (request):
         'name': 'Cleiton Santos',
         'company':'Nutribem Refeicoes LTDA',
         'data':data,
-        'id_entry': '0000280884'
+        'id_entry': '0000280884',
+        'invoice': [
+            
+        ]
     })
 
 def invoice (request, id):

@@ -1,5 +1,5 @@
 {% extends "global/base.html" %}
-{% block title %}Home | {% endblock title %}
+{% block title %}Contas a Pagar | {% endblock title %}
 {% block content %}
 {% include "partials/menu.html" %}
 
@@ -24,31 +24,15 @@
                     <p id="mensagem-erro" class="m-auto" style="color: red; display: none;">A segunda data deve ser maior que a primeira!</p>
                 </div>
             </form>
-            {% comment %} <div class="table-responsive mt-1">
-                <table class="table table-striped table-bordered">
-                    <thead>
-                        <tr>
-                            <th class="text-center bg-dark text-white" colspan="5">Vencimentos dia: {{ data|date:"d/m/Y" }}</th>
-                        </tr>
-                        <tr class="">
-                            <th scope="col" class="bg-secondary text-white">Nº Lançamento</th>
-                            <th scope="col" class="bg-secondary text-white">Centro de Custo</th>
-                            <th scope="col" class="bg-secondary text-white">Fornecedor</th>
-                            <th scope="col" class="bg-secondary text-white">Tipo</th>
-                            <th scope="col" class="bg-secondary text-white">Valor</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr class="">
-                            <td>0000001943</td>
-                            <td>1201 - ADM - TI</td>
-                            <td>Ultraloc - 16.560.908/0001-40</td>
-                            <td>Locação de Equipamentos</td>
-                            <td>R$ 415,00</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div> {% endcomment %}
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-12">
+                        <p class="p-auto m-1">
+                            <strong>Valor Total a pagar: </strong> {{ value }}
+                        </p>
+                  </div>
+                </div>
+            </div>
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-4 mt-2">{% include "partials/invoice.html" %}</div>
@@ -59,8 +43,6 @@
                     <div class="col-4 mt-2">{% include "partials/invoice.html" %}</div>
                 </div>
             </div>
-            
-
         </div>
     </div>
 </div>
