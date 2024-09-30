@@ -1,0 +1,15 @@
+{% extends "global/base.html" %}
+{% block title %}Graficos | {% endblock title %}
+{% block content %}
+{% include "partials/menu.html" %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col">
+
+            {% include "partials/graphicsger.html" %}
+
+        </div>
+    </div>
+</div>
+{% endblock content %} 

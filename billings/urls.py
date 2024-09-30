@@ -5,5 +5,6 @@ urlpatterns = [
 
     path('', views.home, name="index"),
     path('invoices/',views.invoices, name="invoices"),
-    path('invoice/<int:id>',views.invoice, name="invoice")
+    path('invoice/<int:id>',views.invoice, name="invoice"),
+    path('graphics/',views.graphics, name="graphics")
 ] 

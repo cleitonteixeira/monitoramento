@@ -20,3 +20,5 @@ def invoices (request):
 
 def invoice (request, id):
     return render(request, 'pages/invoice.html')
+def graphics (request):
+    return render(request, 'pages/graphics.html')
