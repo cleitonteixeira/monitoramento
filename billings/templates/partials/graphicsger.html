@@ -1,13 +1,16 @@
-<div class="card">
+<div class="card" style="width: 50%;">
     <div class="card-header text-card-title">
-        Evolução Gastos
+        Gráficos de Gastos: Últimos 6 meses 
     </div>
     <div class="card-body">
         <div class="card-text">
             <div>
-                <canvas id="graficG"></canvas>
+                <canvas id="graficG" height="100%">Your browser does not support the canvas element.</canvas>
             </div>
-        </div>        
+        </div>    
+        <div class="card-footer text-muted">
+          Para remover um CR basta clicar na cor correspondente na parte superior do gráfico.
+        </div>    
     </div>
 </div>
 <script>
@@ -19,7 +22,6 @@
         datasets: [{
           label: '1000',
           data: [570000, 610000, 490000, 585000, 525000, 650000],
-          borderWidth: 1
         },{
           type: 'line', 
           label: '1001',
@@ -30,24 +32,24 @@
           data: [180000, 200000, 180000, 200000, 180000, 200000],
         },{
           type: 'line', 
-          label: '1202',
+          label: '1206',
+          data: [185000, 245000, 199800, 240020, 198000, 290500],
+        },{
+          type: 'line', 
+          label: '1206',
           data: [181000, 240000, 189800, 200020, 190000, 290000],
         },{
           type: 'line', 
-          label: '1202',
+          label: '1205',
           data: [181000, 240000, 189800, 200020, 190000, 290000],
         },{
           type: 'line', 
-          label: '1202',
+          label: '1204',
           data: [181000, 240000, 189800, 200020, 190000, 290000],
         },{
           type: 'line', 
-          label: '1202',
-          data: [181000, 240000, 189800, 200020, 190000, 290000],
-        },{
-          type: 'line', 
-          label: '1202',
-          data: [181000, 240000, 189800, 200020, 190000, 290000],
+          label: '1203',
+          data: [181900, 260000, 289800, 230020, 195000, 270000],
         }],
         labels: ['03/2024', '04/2024', '05/2024', '06/2024', '07/2024', '08/2024'],
       },
