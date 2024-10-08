@@ -5,12 +5,18 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <div class="container-fluid">
     <div class="row">
-        <div class="mt-2 col-3">{% include "partials/expenses.html" %}</div>
-        <div class="mt-2 col-3">{% include "partials/person.html" %}</div>
-        <div class="mt-2 col-3">{% include "partials/administrative.html" %}</div>
-        <div class="w-100"></div>
-        <div class="col-6 mt-2">{% include "partials/graphic.html" %}</div>
-        <div class="col-6 mt-2">{% include "partials/graphiccr.html" %}</div>
+        <div class="col-8 mt-2">{% include "partials/graphic.html" %}</div>
+        <div class="mt-2 col-4">
+            <div class="mb-2">
+                {% include "partials/expenses.html" %}
+            </div>
+            <div class="mb-2 p-auto">
+                {% include "partials/person.html" %}
+            </div>
+            <div class="m-auto p-auto">
+                {% include "partials/administrative.html" %}
+            </div>
+        </div>
     </div>
 </div>
 {% endblock content %}
