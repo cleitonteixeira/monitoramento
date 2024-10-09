@@ -28,19 +28,16 @@
                 <div class="row">
                     <div class="col-12">
                         <p class="p-auto m-1">
-                            <strong>Valor Total a pagar: </strong> {{ value }}
+                            <strong>Valor Total a pagar: </strong> {{ invoices.value }}
                         </p>
                   </div>
                 </div>
             </div>
             <div class="container-fluid">
                 <div class="row">
+                    {% for invoice in invoices %}
                     <div class="col-4 mt-2">{% include "partials/invoice.html" %}</div>
-                    <div class="col-4 mt-2">{% include "partials/invoice.html" %}</div>
-                    <div class="col-4 mt-2">{% include "partials/invoice.html" %}</div>
-                    <div class="col-4 mt-2">{% include "partials/invoice.html" %}</div>
-                    <div class="col-4 mt-2">{% include "partials/invoice.html" %}</div>
-                    <div class="col-4 mt-2">{% include "partials/invoice.html" %}</div>
+                    {% endfor %}
                 </div>
             </div>
         </div>

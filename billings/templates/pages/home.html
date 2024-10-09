@@ -2,20 +2,11 @@
 {% block title %}Home | {% endblock title %}
 {% block content %}
 {% include "partials/menu.html" %}
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <div class="container-fluid">
     <div class="row">
-        <div class="col-8 mt-2">{% include "partials/graphic.html" %}</div>
-        <div class="mt-2 col-4">
-            <div class="mb-2">
-                {% include "partials/expenses.html" %}
-            </div>
-            <div class="mb-2 p-auto">
-                {% include "partials/person.html" %}
-            </div>
-            <div class="m-auto p-auto">
-                {% include "partials/administrative.html" %}
-            </div>
+        <div class="col"></div>
+        <div class="col-5 align-self-end mt-2">
+            {% include "partials/lasts_invoices.html" %}
         </div>
     </div>
 </div>
