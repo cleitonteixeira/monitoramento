@@ -4,7 +4,7 @@
         <div class="card-text">
             <div class="list-group list-group-flush">
                 {% for invoice in invoices %}
-                <a href="{% url "invoice" invoice.id_entry %}" class="list-group-item list-group-item-action">
+                <a href="{% url "billings:invoice" invoice.id_entry %}" class="list-group-item list-group-item-action">
                     <div class="d-flex w-100 justify-content-between">
                         <h6 class="mb-1">Fornecedor: {{ invoice.name }}</h6>
                         <small class="text-muted">R$ {{ invoice.value|floatformat:"2g" }}</small>
