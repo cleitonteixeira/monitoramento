@@ -1,6 +1,6 @@
 <div class="card">
     <div class="card-header text-card-title">
-        Custo ultimos 12 meses
+        Custos
     </div>
     <div class="card-body">
         <div class="card-text">
@@ -10,36 +10,45 @@
         </div>        
     </div>
 </div>
-<script>
+<script>    
+    const input = JSON.parse(document.getElementById('input-data').textContent);
+    const staff_expenses = JSON.parse(document.getElementById('staff_expenses-data').textContent);
+    const administrative = JSON.parse(document.getElementById('administrative-data').textContent);
+    const c_months = JSON.parse(document.getElementById('months-data').textContent);
+
     const ctx = document.getElementById('graficG');
-  
+
     new Chart(ctx, {
-      type: 'line',
       data: {
-        datasets: [{
-          label: 'Custo Total',
-          data: [67000, 67000, 67000, 67000, 67000, 67000],
+        datasets: [{% comment %} {
+          type: 'line',
+          label: 'Receita',
+          data: revenue,
+        }, {% endcomment %}{
+          type: 'line', 
+          label: 'Pessoal',
+          data: staff_expenses,
         },{
           type: 'line', 
-          label: 'Mão de Obra',
-          data: [31000, 31501, 32070, 40000, 42950, 42758],
+          label: 'Insumos',
+          data: input,
         },{
           type: 'line', 
           label: 'Administrativo',
-          data: [25307, 24095, 24578, 25336, 27381, 28599],
-        },{
+          data: administrative,
+        }{% comment %} ,{
           type: 'line', 
           label: 'Imposto',
-          data: [15000, 16000, 13500, 12800, 10900, 11283],
-        }],
-        labels: ['04/2024', '05/2024', '06/2024', '07/2024', '08/2024', '09/2024'],
+          data: taxes,
+        } {% endcomment %}],
+        labels: c_months,
       },
-      options: {
+      {% comment %} options: {
         scales: {
           y: {
             beginAtZero: true
           }
         }
-      }
+      } {% endcomment %}
     });
   </script>

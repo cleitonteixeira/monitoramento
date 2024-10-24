@@ -1,0 +1,45 @@
+<div class="card">
+    <div class="card-header text-card-title">
+        Receita
+    </div>
+    <div class="card-body">
+        <div class="card-text">
+            <div>
+                <canvas id="graficR"></canvas>
+            </div>
+        </div>        
+    </div>
+</div>
+<script>    
+    const revenue = JSON.parse(document.getElementById('revenue-data').textContent);
+    const taxes_revenue = JSON.parse(document.getElementById('taxes-data').textContent);
+    const r_months = JSON.parse(document.getElementById('months-data').textContent);
+
+    const ctx_r = document.getElementById('graficR');
+
+    new Chart(ctx_r, {
+      data: {
+        datasets: [{
+          type: 'line', 
+          label: 'Receita',
+          data: revenue,
+          borderColor: '#10FA33',
+          backgroundColor: '#7EF759',
+        },{
+          type: 'line', 
+          label: 'Imposto',
+          data: taxes_revenue,
+          borderColor: '#DD2C00',
+          backgroundColor: '#FA6C50',
+        }],
+        labels: r_months,
+      },
+      {% comment %} options: {
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        }
+      } {% endcomment %}
+    });
+  </script>

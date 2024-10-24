@@ -17,8 +17,8 @@ class Cost(models.Model):
     value = models.FloatField()
     
 class Invoice(models.Model):
-    launch_id = models.BigIntegerField(default=0)
-    type = models.CharField(max_length=20)
+    launch_id = models.CharField(max_length=12)
+    type = models.CharField(max_length=30)
     value = models.FloatField()
     expiration = models.DateField()
     branch_id = models.ForeignKey(Branch, on_delete=models.SET_NULL, null=True)

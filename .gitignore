@@ -129,3 +129,4 @@ connect.py
 db.sqlite3
 db copy.sqlite3
 static/
+SQL
