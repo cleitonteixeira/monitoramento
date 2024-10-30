@@ -13,7 +13,7 @@ values = [
 input = [
     -1796647.21,-1861382.64,-1823040.44,-1619323.71
 ]
-revenue = [
+revenue_list = [
     3929793.57,4282956.55,5242548.45,4614890.36
 ]
 taxes_revenue = [
@@ -29,13 +29,44 @@ months = [
     '06/2024','07/2024','08/2024','09/2024'
 ]
 
+data_rel = {
+    'input' : [ input * -1 for input in input],
+    'taxes_revenue' : [taxes_revenue * -1 for taxes_revenue in taxes_revenue],
+    'administrative' : [ administrative * -1 for administrative in administrative],
+    'staff_expenses' : [ staff_expenses * -1 for staff_expenses in staff_expenses],
+    'revenue_list' : [ revenue_list for revenue_list in revenue_list],
+    'months' : [months for months in months]
+}
+
+revenue_data = {
+    'taxes_revenue' : [taxes_revenue * -1 for taxes_revenue in taxes_revenue],
+    'revenue_list' : [ revenue_list for revenue_list in revenue_list],
+    'months' : [months for months in months]
+}
+
+revenue_detail_list = [
+    {'months': '07/2024', 'branch': {'branch_id': '9901', 'branch_name': 'CASA VERDE HOLDING LTDA'}, 'revenue_value': '79661.5'},
+    {'months': '08/2024', 'branch': {'branch_id': '9901', 'branch_name': 'CASA VERDE HOLDING LTDA'}, 'revenue_value': '231278.93'},
+    {'months': '09/2024', 'branch': {'branch_id': '9901', 'branch_name': 'CASA VERDE HOLDING LTDA'}, 'revenue_value': '152390.59'},
+    {'months': '07/2024', 'branch': {'branch_id': '9903', 'branch_name': 'FAZENDA LG'}, 'revenue_value': '68865.67'},
+    {'months': '08/2024', 'branch': {'branch_id': '9903', 'branch_name': 'FAZENDA LG'}, 'revenue_value': '37113.67'},
+    {'months': '09/2024', 'branch': {'branch_id': '9903', 'branch_name': 'FAZENDA LG'}, 'revenue_value': '36754.17'},
+    {'months': '07/2024', 'branch': {'branch_id': '9904', 'branch_name': 'MINERADORA ARICA'}, 'revenue_value': '218584.96'},
+    {'months': '08/2024', 'branch': {'branch_id': '9904', 'branch_name': 'MINERADORA ARICA'}, 'revenue_value': '268957.46'},
+    {'months': '09/2024', 'branch': {'branch_id': '9904', 'branch_name': 'MINERADORA ARICA'}, 'revenue_value': '178319.66'},
+    {'months': '07/2024', 'branch': {'branch_id': '9905', 'branch_name': 'FAZENDA FREIRE'}, 'revenue_value': '88453.74'},
+    {'months': '08/2024', 'branch': {'branch_id': '9905', 'branch_name': 'FAZENDA FREIRE'}, 'revenue_value': '81653.82'},
+    {'months': '09/2024', 'branch': {'branch_id': '9905', 'branch_name': 'FAZENDA FREIRE'}, 'revenue_value': '47050.22'},
+    {'months': '07/2024', 'branch': {'branch_id': '9906', 'branch_name': 'USINA WD'}, 'revenue_value': '150792.44'},
+    {'months': '08/2024', 'branch': {'branch_id': '9906', 'branch_name': 'USINA WD'}, 'revenue_value': '405794.73'},
+    {'months': '09/2024', 'branch': {'branch_id': '9906', 'branch_name': 'USINA WD'}, 'revenue_value': '162277.56'}
+]
 
 def calc_percent (last,second_last):
     v_final = last/second_last
     v_final = (v_final-1)*100
     v_final = round(v_final,2)
     return v_final
-
 
 def home (request):
     return render(request, 'pages/home.html', context={
@@ -56,20 +87,24 @@ def invoice (request, id):
 
 def costs(request):
     return render(request, 'pages/costs.html', context={
-        'administrative': [administrative * -1 for administrative in administrative],
-        'staff_expenses': [staff_expenses * -1 for staff_expenses in staff_expenses],
-        'input': [input * -1 for input in input],
-        'revenue': revenue,
-        'taxes_revenue': [taxes_revenue * -1 for taxes_revenue in taxes_revenue],
-        'months': months,
-        'input_percent_cost': calc_percent(input[-1],input[-2]),
-        'staff_expenses_percent_cost': calc_percent(staff_expenses[-1],staff_expenses[-2]),
-        'administrative_percent_cost': calc_percent(administrative[-1],administrative[-2]),
-        'taxes_revenue_percent_cost': calc_percent(taxes_revenue[-1],taxes_revenue[-2]),
-        'revenue_percent': calc_percent(revenue[-1],revenue[-2]),
-        'input_cost': input[-1],
-        'staff_expenses_cost': staff_expenses[-1],
-        'taxes_revenue_cost': taxes_revenue[-1],
-        'administrative_cost': administrative[-1],
-        'revenue_total':revenue[-1]
+        'data_rel' : data_rel,
+        'revenue_data' : revenue_data,
+        'input_percent_cost': calc_percent(data_rel['input'][-1],data_rel['input'][-2]),
+        'staff_expenses_percent_cost': calc_percent(data_rel['staff_expenses'][-1],data_rel['staff_expenses'][-2]),
+        'administrative_percent_cost': calc_percent(data_rel['administrative'][-1],data_rel['administrative'][-2]),
+        'taxes_revenue_percent_cost': calc_percent(data_rel['taxes_revenue'][-1],data_rel['taxes_revenue'][-2]),
+        'revenue_percent': calc_percent(data_rel['revenue_list'][-1],data_rel['revenue_list'][-2]),
+        'input_cost': data_rel['input'][-1],
+        'staff_expenses_cost': data_rel['staff_expenses'][-1],
+        'taxes_revenue_cost': data_rel['taxes_revenue'][-1],
+        'administrative_cost': data_rel['administrative'][-1],
+        'revenue_total': data_rel['revenue_list'][-1]
+    })
+
+def revenue(request):
+    return render(request, 'pages/revenue.html', context={
+        'revenue_total': data_rel['revenue_list'][-1],
+        'revenue_percent': calc_percent(data_rel['revenue_list'][-1],data_rel['revenue_list'][-2]),
+        'revenue_data' : revenue_data,
+        'revenue_detail_list' : revenue_detail_list
     })

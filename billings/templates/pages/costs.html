@@ -3,19 +3,21 @@
 {% block content %}
 {% include "partials/menu.html" %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-{{ revenue|json_script:"revenue-data" }}
-{{ input|json_script:"input-data" }}
-{{ administrative|json_script:"administrative-data" }}
-{{ staff_expenses|json_script:"staff_expenses-data" }}
-{{ taxes_revenue|json_script:"taxes-data" }}
-{{ months|json_script:"months-data" }}
+
+{{ data_rel|json_script:'data-rel' }}
+{{ revenue_data|json_script:'revenue-data' }}
+
 <div class="container-fluid">
     <div class="row">
-        <div class="col-4 mt-2">{% include "partials/graphic.html" %}</div>
-        <div class="col-4 mt-2">{% include "partials/revenue.html" %}</div>
+        <div class="col-4 mt-2">
+            {% include "partials/costs_graphic_bar.html" %}
+        </div>
+        <div class="col-4 mt-2">
+            {% include "partials/revenue_graphic_bar.html" %}
+        </div>
         <div class="mt-2 col-4">
             <div class="mb-2">
-                {% include "partials/costs.html" %}
+                {% include "partials/detail_costs.html" %}
             </div>
         </div>
     </div>

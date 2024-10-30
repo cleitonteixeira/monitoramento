@@ -1,0 +1,29 @@
+{% extends "global/base.html" %}
+{% block title %}Receita | {% endblock title %}
+{% block content %}
+{% include "partials/menu.html" %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{{ revenue_data|json_script:'revenue-data' }}
+{{ revenue_detail_list|json_script:'revenue_detail_list-data'}}
+{% for revenue_detail in revenue_detail_list %}
+    {{ revenue_detail.months }}-{{ revenue_detail.branch.branch_name }}
+{% endfor %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-4 mt-2">
+            <div class="mb-1">
+                {% include "partials/revenue_info.html" %}
+            </div>
+            <div class="">
+                {% include "partials/revenue_graphic_bar_overview.html" %}
+            </div>
+        </div>
+        <div class="col-8 mt-2">
+            {% include "partials/revenue_grafic_branchs.html" %}
+            
+        </div>
+        <div class="w-100"></div>
+        
+    </div>
+</div>
+{% endblock content %}

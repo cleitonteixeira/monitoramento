@@ -1,0 +1,37 @@
+<div class="card">
+    <div class="card-header text-card-title">
+      Overview
+    </div>
+    <div class="card-body">
+        <div class="card-text">
+            <div>
+                <canvas id="graficR"></canvas>
+            </div>
+        </div>        
+    </div>
+</div>
+<script>    
+    const revenue_data = JSON.parse(document.getElementById('revenue-data').textContent);
+    const ctx_r = document.getElementById('graficR').getContext('2d');
+    new Chart(ctx_r, {
+      type: 'bar',
+      data: {
+        labels: revenue_data.months,
+        datasets: [
+        {
+          label: 'Receita',
+          data: revenue_data.revenue_list,
+          borderWidth: 2,
+          borderColor: 'rgba(61,130,219,0.75)',
+          backgroundColor: 'rgba(61,130,219,0.5)',
+        }],
+      },
+      options: {
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        },
+      }
+    });
+  </script>

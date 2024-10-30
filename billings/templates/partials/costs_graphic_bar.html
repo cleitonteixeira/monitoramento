@@ -1,0 +1,41 @@
+<div class="card">
+    <div class="card-header text-card-title">
+        Custos
+    </div>
+    <div class="card-body">
+        <div class="card-text">
+            <div>
+                <canvas id="graficG"></canvas>
+            </div>
+        </div>        
+    </div>
+</div>
+<script>    
+    const data_revenue = JSON.parse(document.getElementById('data-rel').textContent);
+
+    const ctx = document.getElementById('graficG').getContext('2d');
+
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        datasets: [{
+          label: 'Pessoal',
+          data: data_revenue.staff_expenses,
+        },{
+          label: 'Insumos',
+          data: data_revenue.input,
+        },{
+          label: 'Administrativo',
+          data: data_revenue.administrative,
+        }],
+        labels: data_revenue.months,
+      },
+      options: {
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        }
+      }
+    });
+  </script>

@@ -3,9 +3,9 @@
     <div class="card-body">
         <div class="card-text">
             <ul class="list-group list-group-flush">
-                <li class="list-group-item d-flex justify-content-between align-items-start">
+                <a href="{% url "billings:revenue" %} " class="list-group-item d-flex justify-content-between align-items-start">
                     <div class="ms-2 me-auto">
-                        <div class="fw-bold">Receita</div>
+                        <div class="fw-bold">Receita Bruta</div>
                         <span class="text-muted font-monospace text-small">
                             {% if revenue_percent > 0 %}
                             +{{ revenue_percent|floatformat:"2g" }}% do mês anterior
@@ -16,11 +16,11 @@
                             {% endif %}
                         </span>
                     </div>
-                    <span class="mt-auto p-1 bg-secondary rounded-pill text-white">R$ {{ revenue_total|floatformat:"2g" }}</span>
-                </li>
+                    <span class="text-center p-1 bg-secondary rounded-pill text-white">R$ {{ revenue_total|floatformat:"2g" }}</span>
+                </a>
                 <li class="list-group-item d-flex justify-content-between align-items-start">
                     <div class="ms-2 me-auto">
-                        <div class="fw-bold">Imposto Receita</div>
+                        <div class="fw-bold">Imposto Receita Bruta</div>
                         <span class="text-muted font-monospace text-small">
                             {% if taxes_revenue_percent_cost > 0 %}
                             +{{ taxes_revenue_percent_cost|floatformat:"2g" }}% do mês anterior
@@ -31,7 +31,7 @@
                             {% endif %}
                         </span>
                     </div>
-                    <span class="mt-auto p-1 bg-secondary rounded-pill text-white">R$ {{ taxes_revenue_cost|floatformat:"2g" }}</span>
+                    <span class="text-center p-1 bg-secondary rounded-pill text-white">R$ {{ taxes_revenue_cost|floatformat:"2g" }}</span>
                 </li>
                 <li class="list-group-item d-flex justify-content-between align-items-start">
                     <div class="ms-2 me-auto">
@@ -46,22 +46,7 @@
                             {% endif %}
                         </span>
                     </div>
-                    <span class="mt-auto p-1 bg-secondary rounded-pill text-white">R$ {{ input_cost|floatformat:"2g" }}</span>
-                </li>
-                <li class="list-group-item d-flex justify-content-between align-items-start">
-                    <div class="ms-2 me-auto">
-                        <div class="fw-bold">Administrativo</div>
-                        <span class="text-muted font-monospace text-small">
-                            {% if administrative_percent_cost > 0 %}
-                            +{{ administrative_percent_cost|floatformat:"2g" }}% do mês anterior
-                            {% elif administrative_percent_cost < 0 %}
-                            {{ administrative_percent_cost|floatformat:"2g" }}% do mês anterior
-                            {% else %}
-                            Custo igual ao mês anterior
-                            {% endif %}
-                        </span>
-                    </div>
-                    <span class="mt-auto p-1 bg-secondary rounded-pill text-white">R$ {{ administrative_cost|floatformat:"2g" }}</span>
+                    <span class="text-center p-1 bg-secondary rounded-pill text-white">R$ {{ input_cost|floatformat:"2g" }}</span>
                 </li>
                 <li class="list-group-item d-flex justify-content-between align-items-start">
                     <div class="ms-2 me-auto">
@@ -76,10 +61,24 @@
                             {% endif %}
                         </span>
                     </div>
-                    <span class="mt-auto p-1 bg-secondary rounded-pill text-white">R$ {{ staff_expenses_cost|floatformat:"2g" }}</span>
+                    <span class="text-center p-1 bg-secondary rounded-pill text-white">R$ {{ staff_expenses_cost|floatformat:"2g" }}</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-start">
+                    <div class="ms-2 me-auto">
+                        <div class="fw-bold">Administrativo</div>
+                        <span class="text-muted font-monospace text-small">
+                            {% if administrative_percent_cost > 0 %}
+                            +{{ administrative_percent_cost|floatformat:"2g" }}% do mês anterior
+                            {% elif administrative_percent_cost < 0 %}
+                            {{ administrative_percent_cost|floatformat:"2g" }}% do mês anterior
+                            {% else %}
+                            Custo igual ao mês anterior
+                            {% endif %}
+                        </span>
+                    </div>
+                    <span class="text-center p-1 bg-secondary rounded-pill text-white">R$ {{ administrative_cost|floatformat:"2g" }}</span>
                 </li>
             </ul>
-
         </div>
     </div>
 </div>

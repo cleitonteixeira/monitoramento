@@ -11,10 +11,7 @@
     </div>
 </div>
 <script>    
-    const input = JSON.parse(document.getElementById('input-data').textContent);
-    const staff_expenses = JSON.parse(document.getElementById('staff_expenses-data').textContent);
-    const administrative = JSON.parse(document.getElementById('administrative-data').textContent);
-    const c_months = JSON.parse(document.getElementById('months-data').textContent);
+    const data_revenue = JSON.parse(document.getElementById('data-rel').textContent);
 
     const ctx = document.getElementById('graficG');
 
@@ -23,25 +20,25 @@
         datasets: [{% comment %} {
           type: 'line',
           label: 'Receita',
-          data: revenue,
+          data: data_revenue.revenue,
         }, {% endcomment %}{
           type: 'line', 
           label: 'Pessoal',
-          data: staff_expenses,
+          data: data_revenue.staff_expenses,
         },{
           type: 'line', 
           label: 'Insumos',
-          data: input,
+          data: data_revenue.input,
         },{
           type: 'line', 
           label: 'Administrativo',
-          data: administrative,
+          data: data_revenue.administrative,
         }{% comment %} ,{
           type: 'line', 
           label: 'Imposto',
           data: taxes,
         } {% endcomment %}],
-        labels: c_months,
+        labels: data_revenue.months,
       },
       {% comment %} options: {
         scales: {

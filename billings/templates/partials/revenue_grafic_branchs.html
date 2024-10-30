@@ -1,0 +1,49 @@
+<div class="card">
+    <div class="card-header text-card-title">
+      Receita por Filial
+    </div>
+    <div class="card-body">
+        <div class="card-text">
+            <div>
+                <canvas id="graficB"></canvas>
+            </div>
+        </div>        
+    </div>
+</div>
+<script>    
+    const revenue_detail_list = JSON.parse(document.getElementById('revenue_detail_list-data').textContent);
+    console.log(revenue_detail_list);
+    const ctx_b = document.getElementById('graficB').getContext('2d');
+    new Chart(ctx_b, {
+      type: 'bar',
+      data: {
+        labels: [
+        {% for revenue_detail in revenue_detail_list  %}
+        '{{ revenue_detail.months }}',
+        {% endfor %}
+        ],
+        datasets: [
+        {% for revenue_detail in revenue_detail_list  %}
+        {
+          label: '{{revenue_detail.branch.branch_id}}'',
+          data:  [
+          {% for revenue_detail1 in revenue_detail_list  %}
+          '{{ revenue_detail1.revenue_value }}',
+          {% endfor %}
+          ],
+          borderWidth: 2,
+          borderColor: 'rgba(61,130,219,0.75)',
+          backgroundColor: 'rgba(61,130,219,0.5)',
+        }
+        {% endfor %}
+        ],
+      },
+      options: {
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        },
+      }
+    });
+  </script>

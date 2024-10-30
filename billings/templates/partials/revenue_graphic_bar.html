@@ -11,35 +11,33 @@
     </div>
 </div>
 <script>    
-    const revenue = JSON.parse(document.getElementById('revenue-data').textContent);
-    const taxes_revenue = JSON.parse(document.getElementById('taxes-data').textContent);
-    const r_months = JSON.parse(document.getElementById('months-data').textContent);
+    const revenue_data = JSON.parse(document.getElementById('revenue-data').textContent);
 
-    const ctx_r = document.getElementById('graficR');
+    const ctx_r = document.getElementById('graficR').getContext('2d');
 
     new Chart(ctx_r, {
+      type: 'bar',
       data: {
-        datasets: [{
-          type: 'line', 
+        labels: revenue_data.months,
+        datasets: [
+        {
           label: 'Receita',
-          data: revenue,
+          data: revenue_data.revenue_list,
           borderColor: '#1DEB7D',
           backgroundColor: '#7EF759',
         },{
-          type: 'line', 
           label: 'Imposto',
-          data: taxes_revenue,
+          data: revenue_data.taxes_revenue,
           borderColor: '#DD2C00',
           backgroundColor: '#FA6C50',
         }],
-        labels: r_months,
       },
-      {% comment %} options: {
+      options: {
         scales: {
           y: {
             beginAtZero: true
           }
-        }
-      } {% endcomment %}
+        },
+      }
     });
   </script>
