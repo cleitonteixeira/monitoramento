@@ -5,10 +5,10 @@ app_name = 'billings'
 
 urlpatterns = [
 
-    path('', views.home, name="index"),
+    path('home/', views.home, name="index"),
     path('invoices/',views.invoices, name="invoices"),
     path('invoice/<int:id>', views.invoice, name="invoice"),
     path('costs/', views.costs, name="costs"),
     path('revenue/', views.revenue, name="revenue"),
-    
+    path('expenses/', views.expenses, name="expenses"),
 ] 

@@ -1,0 +1,67 @@
+<form class="row row-cols-lg-auto align-items-center mt-2 needs-validation" novalidate>
+    <div class="col-12">
+        <div class="input-group has-validation">
+            <div class="input-group-text">CR:</div>
+            <select class="form-select" id="cr_select" required aria-describedby="invalidCheck3Feedback">
+                <option selected disabled value="">Escolha o CR</option>
+                <option value="0">NUTRIBEM</option>
+                <option value="1">1000 - DIRETORIA GERAL</option>
+                <option value="2">1202 - ADM RH</option>
+                <option value="3">1401 - ADM LOGISTICA</option>
+            </select>
+        </div>
+    </div>
+    <div class="col-12">
+        <div class="input-group has-validation">
+            <input type="month" value="{{ data|date:"Y-m-d" }}" class="form-control" id="iDate" title="Data Inicial" required>
+            <div class="input-group-text">até</div>
+            <input type="month" value="{{ data|date:"Y-m-d" }}" class="form-control" id="fDate" title="Data Final" required oninput="validarData()">
+        </div>
+    </div>
+    <div class="col-12">
+        <button type="submit" id="btn-search" class="btn btn-secondary"><i class="fas fa-search"></i> Search</button>
+    </div>
+    <div class="col-12">
+        <p id="mensagem-erro" class="m-auto" style="color: red; display: none;">O segundo mês deve ser maior ou igual o primeiro!</p>
+    </div>
+</form>
+<script>
+    function validarData() {
+        const data1 = document.getElementById("iDate").value;
+        const data2 = document.getElementById("fDate").value;
+        const mensagemErro = document.getElementById("mensagem-erro");
+        const btn = document.getElementById("btn-search");
+
+        if (data1 && data2) {  // Verifica se ambas as datas estão preenchidas
+            if (data2 < data1) {
+                mensagemErro.style.display = "block"; // Mostra a mensagem de erro
+                btn.classList.add("disabled");
+            } else {
+                mensagemErro.style.display = "none";  // Esconde a mensagem de erro
+                btn.classList.remove("disabled");
+            }
+        }
+    }
+</script>
+<script>
+    // Example starter JavaScript for disabling form submissions if there are invalid fields
+(function () {
+    'use strict'
+  
+    // Fetch all the forms we want to apply custom Bootstrap validation styles to
+    var forms = document.querySelectorAll('.needs-validation')
+  
+    // Loop over them and prevent submission
+    Array.prototype.slice.call(forms)
+      .forEach(function (form) {
+        form.addEventListener('submit', function (event) {
+          if (!form.checkValidity()) {
+            event.preventDefault()
+            event.stopPropagation()
+          }
+  
+          form.classList.add('was-validated')
+        }, false)
+      })
+  })()
+</script>

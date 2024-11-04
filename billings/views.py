@@ -43,24 +43,35 @@ revenue_data = {
     'revenue_list' : [ revenue_list for revenue_list in revenue_list],
     'months' : [months for months in months]
 }
+revenue_months = {
+    'months' : [months for months in months]
+}
 
-revenue_detail_list = [
-    {'months': '07/2024', 'branch': {'branch_id': '9901', 'branch_name': 'CASA VERDE HOLDING LTDA'}, 'revenue_value': '79661.5'},
-    {'months': '08/2024', 'branch': {'branch_id': '9901', 'branch_name': 'CASA VERDE HOLDING LTDA'}, 'revenue_value': '231278.93'},
-    {'months': '09/2024', 'branch': {'branch_id': '9901', 'branch_name': 'CASA VERDE HOLDING LTDA'}, 'revenue_value': '152390.59'},
-    {'months': '07/2024', 'branch': {'branch_id': '9903', 'branch_name': 'FAZENDA LG'}, 'revenue_value': '68865.67'},
-    {'months': '08/2024', 'branch': {'branch_id': '9903', 'branch_name': 'FAZENDA LG'}, 'revenue_value': '37113.67'},
-    {'months': '09/2024', 'branch': {'branch_id': '9903', 'branch_name': 'FAZENDA LG'}, 'revenue_value': '36754.17'},
-    {'months': '07/2024', 'branch': {'branch_id': '9904', 'branch_name': 'MINERADORA ARICA'}, 'revenue_value': '218584.96'},
-    {'months': '08/2024', 'branch': {'branch_id': '9904', 'branch_name': 'MINERADORA ARICA'}, 'revenue_value': '268957.46'},
-    {'months': '09/2024', 'branch': {'branch_id': '9904', 'branch_name': 'MINERADORA ARICA'}, 'revenue_value': '178319.66'},
-    {'months': '07/2024', 'branch': {'branch_id': '9905', 'branch_name': 'FAZENDA FREIRE'}, 'revenue_value': '88453.74'},
-    {'months': '08/2024', 'branch': {'branch_id': '9905', 'branch_name': 'FAZENDA FREIRE'}, 'revenue_value': '81653.82'},
-    {'months': '09/2024', 'branch': {'branch_id': '9905', 'branch_name': 'FAZENDA FREIRE'}, 'revenue_value': '47050.22'},
-    {'months': '07/2024', 'branch': {'branch_id': '9906', 'branch_name': 'USINA WD'}, 'revenue_value': '150792.44'},
-    {'months': '08/2024', 'branch': {'branch_id': '9906', 'branch_name': 'USINA WD'}, 'revenue_value': '405794.73'},
-    {'months': '09/2024', 'branch': {'branch_id': '9906', 'branch_name': 'USINA WD'}, 'revenue_value': '162277.56'}
-]
+revenue_detail_list = {
+    'labels': ['07/2024', '08/2024', '09/2024'],
+    'datasets': [
+        {
+            'label': '9901',
+            'data': [79661.5, 231278.93, 152390.59]
+        },
+        {
+            'label': '9903',
+            'data': [68865.67, 37113.67, 36754.17]
+        },
+        {
+            'label': '9904',
+            'data': [218584.96, 268957.46, 178319.66]
+        },
+        {
+            'label': '9905',
+            'data': [88453.74, 81653.82, 47050.22]
+        },
+        {
+            'label': '9906',
+            'data': [150792.44, 405794.73, 162277.56]
+        },
+    ]
+}
 
 def calc_percent (last,second_last):
     v_final = last/second_last
@@ -106,5 +117,7 @@ def revenue(request):
         'revenue_total': data_rel['revenue_list'][-1],
         'revenue_percent': calc_percent(data_rel['revenue_list'][-1],data_rel['revenue_list'][-2]),
         'revenue_data' : revenue_data,
-        'revenue_detail_list' : revenue_detail_list
+        'revenue_detail_list' : revenue_detail_list,
     })
+def expenses(request):
+    return render(request, 'pages/expenses.html')

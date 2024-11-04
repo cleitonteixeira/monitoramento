@@ -4,10 +4,7 @@
 {% include "partials/menu.html" %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 {{ revenue_data|json_script:'revenue-data' }}
-{{ revenue_detail_list|json_script:'revenue_detail_list-data'}}
-{% for revenue_detail in revenue_detail_list %}
-    {{ revenue_detail.months }}-{{ revenue_detail.branch.branch_name }}
-{% endfor %}
+{{ revenue_detail_list|json_script:'revenue_detail_list-data' }}
 <div class="container-fluid">
     <div class="row">
         <div class="col-4 mt-2">

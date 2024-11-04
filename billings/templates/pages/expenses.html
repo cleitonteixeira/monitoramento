@@ -1,0 +1,12 @@
+{% extends "global/base.html" %}
+{% block title %}Despesas | {% endblock title %}
+{% block content %}
+{% include "partials/menu.html" %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="">
+            {% include "partials/from_expenses.html" %}
+        </div>
+    </div>
+</div>
+{% endblock content %}

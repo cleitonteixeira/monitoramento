@@ -1,6 +1,6 @@
 <div class="card">
     <div class="card-header text-card-title">
-        Receita
+        Imposto
     </div>
     <div class="card-body">
         <div class="card-text">
@@ -20,16 +20,17 @@
       data: {
         labels: revenue_data.months,
         datasets: [
-        {
+        {% comment %} {
           label: 'Receita',
           data: revenue_data.revenue_list,
           borderColor: '#1DEB7D',
           backgroundColor: '#7EF759',
-        },{
-          label: 'Imposto',
+        }, {% endcomment %}{
+          label: 'Imposto Receita',
           data: revenue_data.taxes_revenue,
-          borderColor: '#DD2C00',
-          backgroundColor: '#FA6C50',
+          borderWidth: 1,
+          borderColor: 'rgba(255,16,0,0.75)',
+          backgroundColor: 'rgba(255,16,0,0.5)',
         }],
       },
       options: {

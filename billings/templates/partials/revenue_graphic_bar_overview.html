@@ -14,7 +14,7 @@
     const revenue_data = JSON.parse(document.getElementById('revenue-data').textContent);
     const ctx_r = document.getElementById('graficR').getContext('2d');
     new Chart(ctx_r, {
-      type: 'bar',
+      type: 'line',
       data: {
         labels: revenue_data.months,
         datasets: [
@@ -29,7 +29,7 @@
       options: {
         scales: {
           y: {
-            beginAtZero: true
+            beginAtZero: false
           }
         },
       }

@@ -6,14 +6,22 @@
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="{% url "billings:index" %}">Home</a>
+                        <a class="nav-link {% if 'home' in request.path %}active{% endif %}
+                        " aria-current="page" href="{% url "billings:index" %}">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="{% url "billings:invoices" %}">Contas</a>
+                        <a class="nav-link
+                        {% if 'invoices' in request.path %}active{% endif %}
+                        " aria-current="page" href="{% url "billings:invoices" %}">Contas</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="{% url "billings:costs" %}">Custos</a>
-                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Análise Financeira
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                          <li><a class="dropdown-item {% if 'costs' in request.path %}active{% endif %}" href="{% url "billings:costs" %}">Custos</a></li>
+                          <li><a class="dropdown-item {% if 'revenue' in request.path %}active{% endif %}" href="{% url "billings:revenue" %}">Receita</a></li>
+                      </li>
                 </ul>
             </div>
         </div>
