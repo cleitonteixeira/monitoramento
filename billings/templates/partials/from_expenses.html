@@ -5,9 +5,9 @@
             <select class="form-select" id="cr_select" required aria-describedby="invalidCheck3Feedback">
                 <option selected disabled value="">Escolha o CR</option>
                 <option value="0">NUTRIBEM</option>
-                <option value="1">1000 - DIRETORIA GERAL</option>
-                <option value="2">1202 - ADM RH</option>
-                <option value="3">1401 - ADM LOGISTICA</option>
+                {% for cr in crs %}
+                <option value="{{cr.cr}}">{{cr.cr}}-{{cr.name}}</option>
+                {% endfor %}
             </select>
         </div>
     </div>

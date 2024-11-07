@@ -21,8 +21,12 @@
                         <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                           <li><a class="dropdown-item {% if 'costs' in request.path %}active{% endif %}" href="{% url "billings:costs" %}">Custos</a></li>
                           <li><a class="dropdown-item {% if 'revenue' in request.path %}active{% endif %}" href="{% url "billings:revenue" %}">Receita</a></li>
-                      </li>
+                        </ul>
+                    </li>
                 </ul>
+                <span class="navbar-text">
+                    {% if user.is_authenticated %}Bem Vindo, {{ user.first_name }}.{% endif %}
+                </span>
             </div>
         </div>
     </nav>

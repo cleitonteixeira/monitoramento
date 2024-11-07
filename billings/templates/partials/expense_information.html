@@ -1,13 +1,56 @@
-<table class="table table-bordered">
+<table id="expenses" class="display table table-bordered">
     <thead>
         <th>CR</th>
-        <th>INSUMOS</th>
-        <th>PESSOAS</th>
+        <th>PERIODO</th>
         <th>ADMINISTRATIVO</th>
+        <th>PESSOAS</th>
+        <th>INSUMOS</th>
+        <th>OUTROS</th>
     </thead>
     <tbody>
+        {% for data_expense in data_expenses_json %}
         <tr>
-            <td></td>
+            <td>
+                {{ data_expense.cr }}
+            </td>
+            <td>
+                {{ data_expense.mesano }}
+            </td>
+            <td>
+                R$ {{data_expense.despesas.0.ADMINISTRATIVO|floatformat:"2g"}}
+            </td>
+            <td>
+                R$ {{data_expense.despesas.1.PESSOAS|floatformat:"2g"}}
+            </td>
+            <td>
+                R$ {{data_expense.despesas.2.INSUMOS|floatformat:"2g"}}
+            </td>
+            <td>
+                R$ {{data_expense.despesas.3.OUTROS|floatformat:"2g"}}
+            </td>
         </tr>
+        {% endfor %}
     </tbody>
 </table>
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.1/css/jquery.dataTables.min.css"/>
+<script src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>   
+<script>
+    $(document).ready( function () {
+        $('#expenses').DataTable({
+            language: {
+                url: '//cdn.datatables.net/plug-ins/2.1.8/i18n/pt-BR.json',
+            },
+            search: {
+                "return": true
+            },
+            "columns": [
+                null,
+                null,
+                { "type": "currency" },
+                { "type": "currency" },
+                { "type": "currency" },
+                { "type": "currency" }
+            ]
+        });
+    } );
+</script>

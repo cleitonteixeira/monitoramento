@@ -2,9 +2,18 @@ from django.db import models
 from django.contrib.auth.models import User
 
 # Create your models here.
+class TypeBranch(models.Model):
+    name = models.CharField(max_length=50)
+    def __str__(self):
+        return self.name
+    
+    
 class Branch(models.Model):
     branch_id = models.IntegerField()
     name = models.CharField(max_length=50)
+    type_id = models.ForeignKey(TypeBranch, on_delete=models.SET_NULL, null=True)
+    def __str__(self):
+        return self.name
 
 class Supplier(models.Model):
     name = models.CharField(max_length=50)
