@@ -484,3 +484,9 @@ def expenses(request):
         'crs' : cr,
         'data_expenses_json' : JsonCreate(data_costs),
     })
+    
+    
+def dre(request):
+    return render(request, 'pages/dre.html',context={
+        
+    })

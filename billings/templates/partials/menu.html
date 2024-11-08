@@ -21,6 +21,7 @@
                         <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                           <li><a class="dropdown-item {% if 'costs' in request.path %}active{% endif %}" href="{% url "billings:costs" %}">Custos</a></li>
                           <li><a class="dropdown-item {% if 'revenue' in request.path %}active{% endif %}" href="{% url "billings:revenue" %}">Receita</a></li>
+                          <li><a class="dropdown-item {% if 'dre' in request.path %}active{% endif %}" href="{% url "billings:dre" %}">DRE</a></li>
                         </ul>
                     </li>
                 </ul>
