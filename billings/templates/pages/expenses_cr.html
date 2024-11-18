@@ -1,0 +1,26 @@
+{% extends "global/base.html" %}
+{% block title %}Despesas | {% endblock title %}
+{% block content %}
+{% include "partials/menu.html" %}
+<div class="container-fluid">
+    <div class="row">
+        <form class="row row-cols-lg-auto align-items-center mt-2 needs-validation" novalidate>
+            <div class="col-12">
+                <div class="input-group has-validation">
+                    <div class="input-group-text">CR:</div>
+                    <select class="form-select" id="cr_select" required aria-describedby="invalidCheck3Feedback">
+                        <option selected disabled value="">Escolha o CR</option>
+                        <option value="0">NUTRIBEM</option>
+                        {% for cr in crs %}
+                        <option value="{{cr.cr}}">{{cr.cr}}-{{cr.name}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="mt-2">
+                    {% include "partials/person.html" %}
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock content %}

@@ -10,7 +10,6 @@ class TypeBranch(models.Model):
     def __str__(self):
         return self.name
     
-    
 class Branch(models.Model):
     branch_id = models.IntegerField()
     name = models.CharField(max_length=50)
@@ -59,3 +58,21 @@ class Dre(models.Model):
     branch_id = models.ForeignKey(Branch, on_delete=models.SET_NULL, null=True)
     created_at = models.DateField(auto_now_add=True)
     updated_at = models.DateField(auto_now=True)
+
+class LimitExpenses(models.Model):
+    value = models.FloatField()
+    period = models.DateField()
+    branch_id = models.ForeignKey(Branch, on_delete=models.SET_NULL, null=True, blank=True, default=None),
+    created_at = models.DateField(auto_now_add=True)
+    updated_at = models.DateField(auto_now=True)
+    def __str__(self):
+        return self.value
+
+class LogLimitExpenses(models.Model):
+    value = models.FloatField()
+    period = models.DateField()
+    branch_id = models.ForeignKey(Branch, on_delete=models.CASCADE, null=True)
+    created_at = models.DateField(auto_now_add=True)
+    updated_at = models.DateField(auto_now=True)
+    def __str__(self):
+        return self.value

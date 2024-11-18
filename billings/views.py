@@ -1,7 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from datetime import datetime
-import json
 import pandas as pd
 # Create your views here.
 
@@ -447,8 +446,6 @@ def home (request):
 def invoices (request):
     data = datetime.now()
     return render(request, 'pages/invoices.html', context={
-        'name': 'Cleiton Santos',
-        'company':'Nutribem Refeicoes LTDA',
         'data':data,
         'invoices': values
     })
@@ -490,3 +487,8 @@ def dre(request):
     return render(request, 'pages/dre.html',context={
         
     })
+
+def expenses_cr(request):
+    return render(request, 'pages/expenses_cr.html',context={
+        'crs' : cr
+    }) 
