@@ -11,7 +11,7 @@ class TypeBranch(models.Model):
         return self.name
     
 class Branch(models.Model):
-    branch_id = models.IntegerField()
+    code = models.IntegerField(unique=True)
     name = models.CharField(max_length=50)
     type = models.ForeignKey(TypeBranch, on_delete=models.SET_NULL, null=True)
     created_at = models.DateField(auto_now_add=True)
@@ -76,3 +76,14 @@ class LogLimitExpenses(models.Model):
     updated_at = models.DateField(auto_now=True)
     def __str__(self):
         return self.value
+    
+class Expense(models.Model):
+    type = models.CharField(max_length=30)
+    value = models.FloatField()
+    period = models.CharField(max_length=7)
+    branch_id = models.ForeignKey(Branch, on_delete=models.CASCADE)
+    created_at = models.DateField(auto_now_add=True)
+    updated_at = models.DateField(auto_now=True)
+    
+    def __str__(self):
+        return self.type

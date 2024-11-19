@@ -4,23 +4,64 @@
 {% include "partials/menu.html" %}
 <div class="container-fluid">
     <div class="row">
-        <form class="row row-cols-lg-auto align-items-center mt-2 needs-validation" novalidate>
+        <form method="post" class="row row-cols-lg-auto align-items-center mt-2 needs-validation" novalidate>
             <div class="col-12">
                 <div class="input-group has-validation">
                     <div class="input-group-text">CR:</div>
-                    <select class="form-select" id="cr_select" required aria-describedby="invalidCheck3Feedback">
-                        <option selected disabled value="">Escolha o CR</option>
-                        <option value="0">NUTRIBEM</option>
+                    <select class="form-select" id="cr_select" name="cr_select" required aria-describedby="invalidCheck3Feedback">
+                        <option {% if cResult is None %}selected{% endif %} disabled value="">Escolha o CR</option>
                         {% for cr in crs %}
-                        <option value="{{cr.cr}}">{{cr.cr}}-{{cr.name}}</option>
+                        <option {% if cResult == cr.code %}selected{% endif %} value="{{cr.code}}">{{cr.code}}-{{cr.name}}</option>
                         {% endfor %}
                     </select>
                 </div>
-                <div class="mt-2">
-                    {% include "partials/person.html" %}
+            </div>
+            <div class="col-12">
+                <div class="input-group has-validation">
+                    <div class="input-group-text">Mês:</div>
+                    <input type="month" value="{{ data|date:"Y-m" }}" class="form-control" id="data" name="data" required>
                 </div>
             </div>
+            {% csrf_token %}
+            <button class="btn btn-outline-secondary" type="submit"><i class="fas fa-search"></i></button>
         </form>
+        {% if cResult is not None %}
+        <div class="container mt-2">
+            <div class="row">
+                    <p class="lead">
+                        Resultado do CR <strong>{{ cResult.code }} - {{ cResult.name }}</strong> do mês <strong>{{data|date:"m/Y"}}</strong>.
+                    </p>
+                    {% for result in results %}
+                    <div class="col-2">
+                        {% include "partials/expense.html" %}
+                    </div>
+                    {% endfor %}
+            </div>
+        </div>
+        {% endif %}
     </div>
 </div>
+<script>
+    // Example starter JavaScript for disabling form submissions if there are invalid fields
+(function () {
+    'use strict'
+  
+    // Fetch all the forms we want to apply custom Bootstrap validation styles to
+    var forms = document.querySelectorAll('.needs-validation')
+  
+    // Loop over them and prevent submission
+    Array.prototype.slice.call(forms)
+      .forEach(function (form) {
+        form.addEventListener('submit', function (event) {
+          if (!form.checkValidity()) {
+            event.preventDefault()
+            event.stopPropagation()
+          }
+  
+          form.classList.add('was-validated')
+        }, false)
+      })
+  })()
+</script>
 {% endblock content %}
+

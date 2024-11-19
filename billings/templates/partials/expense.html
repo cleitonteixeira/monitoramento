@@ -1,0 +1,9 @@
+<div class="card">
+    <div class="card-header text-card-title">{{ result.title }}</div>
+    <div class="card-body">
+        <div class="card-text">
+            <span class="text-card-values">R$ {{ result.value|floatformat:"2g"  }}</span>
+            {% comment %} <p class="font-monospace text-card-small">+15.2% do mês anterior</p> {% endcomment %}
+        </div>
+    </div>
+</div>
