@@ -10,7 +10,7 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-8 mt-2">
-            {% include "partials/costs_graphic_bar.html" %}
+            {% include "partials/graphic_costs.html" %}
         </div>
         <div class="mt-2 col-4">
             <div class="mb-2">
@@ -22,8 +22,8 @@
                         Detalhes
                     </div>
                     <div class="card-body">
-                        <a href="{% url "billings:expenses" %}" class="btn btn-dark">Detalhes Despesas</a>
-                        <a href="{% url "billings:expenses_cr" %}" class="btn btn-info">Despesas por CR</a>
+                        {% comment %} <a href="{% url "billings:expenses" %}" class="btn btn-dark">Detalhes Despesas</a> {% endcomment %}
+                        <a href="{% url "billings:expenses_cr" %}" class="btn btn-outline-secondary">Despesas por CR</a>
                     </div>
                 </div>
             </div>

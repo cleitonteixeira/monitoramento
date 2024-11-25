@@ -17,6 +17,10 @@
     font-weight: bolder;
     font-size: larger;
 }
+.expense-card-values{
+    font-weight: 600;
+    font-size: larger;
+}
 .invoice-link, .invoice-link:visited, .invoice-link:link, .invoice-link:active{
     text-decoration: none;
     color: black;

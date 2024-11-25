@@ -2,6 +2,7 @@
 {% block title %}Despesas | {% endblock title %}
 {% block content %}
 {% include "partials/menu.html" %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <div class="container-fluid">
     <div class="row">
         <form method="post" class="row row-cols-lg-auto align-items-center mt-2 needs-validation" novalidate>
@@ -11,7 +12,7 @@
                     <select class="form-select" id="cr_select" name="cr_select" required aria-describedby="invalidCheck3Feedback">
                         <option {% if cResult is None %}selected{% endif %} disabled value="">Escolha o CR</option>
                         {% for cr in crs %}
-                        <option {% if cResult == cr.code %}selected{% endif %} value="{{cr.code}}">{{cr.code}}-{{cr.name}}</option>
+                        <option {% if cResult.code == cr.code %}selected{% endif %} value="{{cr.code}}">{{cr.code}}-{{cr.name}}</option>
                         {% endfor %}
                     </select>
                 </div>
@@ -19,23 +20,36 @@
             <div class="col-12">
                 <div class="input-group has-validation">
                     <div class="input-group-text">Mês:</div>
-                    <input type="month" value="{{ data|date:"Y-m" }}" class="form-control" id="data" name="data" required>
+                    <input type="month" value="{{ data|date:"Y-m" }}" class="form-control" id="data" name="data" required oninput="validarData()">
                 </div>
             </div>
+            <div class="col-12">
+                <button class="btn btn-outline-secondary" type="submit" id="btn-search"><i class="fas fa-search"></i></button>
+            </div>
+            <div class="col-12">
+                <p id="mensagem-erro" class="m-auto" style="color: red; display: none;">O mês deve ser anterior ao mês atual!</p>
+            </div>
             {% csrf_token %}
-            <button class="btn btn-outline-secondary" type="submit"><i class="fas fa-search"></i></button>
         </form>
         {% if cResult is not None %}
         <div class="container mt-2">
             <div class="row">
+                <div class="col-12">
                     <p class="lead">
-                        Resultado do CR <strong>{{ cResult.code }} - {{ cResult.name }}</strong> do mês <strong>{{data|date:"m/Y"}}</strong>.
+                        Resultado do CR <strong>{{ cResult.code }} - {{ cResult.name }}</strong> do mês 
+                        <strong>{{data|date:"m/Y"}}</strong> foi no valor de R$ <strong>{{ total.0.value|floatformat:"2g" }}</strong>.
                     </p>
-                    {% for result in results %}
-                    <div class="col-2">
-                        {% include "partials/expense.html" %}
+                    <div class="row">
+                        {% for result in results %}
+                            <div class="col-3">
+                                {% include "partials/expense.html" %}
+                            </div>
+                        {% endfor %}
                     </div>
-                    {% endfor %}
+                </div>
+                <div class="col-4 mt-2">
+                    {% include "partials/grafic_expense.html" %}
+                </div>
             </div>
         </div>
         {% endif %}
@@ -62,6 +76,32 @@
         }, false)
       })
   })()
+</script>
+<script>
+    function validarData() {
+        const monthInput  = new Date(document.getElementById("data").value);
+        const msgErro   = document.getElementById("mensagem-erro");
+        const btn       = document.getElementById("btn-search");
+        
+        const today     = new Date();
+        const sYear     = monthInput.getFullYear();
+        const sMonth    = monthInput.getMonth()+1;
+
+        const aYear     = today.getFullYear();
+        const aMonth    = today.getMonth();
+
+        if (sYear < aYear) {
+            msgErro.style.display = "none";  // Esconde a mensagem de erro
+            btn.classList.remove("disabled");       
+        }else if(sYear === aYear && sMonth < aMonth){
+            msgErro.style.display = "none";  // Esconde a mensagem de erro
+            btn.classList.remove("disabled");
+        }else{
+            monthInput.value = '';
+            msgErro.style.display = "block"; // Mostra a mensagem de erro
+            btn.classList.add("disabled");
+        }
+    }
 </script>
 {% endblock content %}
 

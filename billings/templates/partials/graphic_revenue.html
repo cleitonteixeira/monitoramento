@@ -1,0 +1,28 @@
+<div class="card">
+    <div class="card-header text-card-title">
+      Receita por Filial
+    </div>
+    <div class="card-body">
+        <div class="card-text">
+            <div>
+                <canvas id="graficB"></canvas>
+            </div>
+        </div>        
+    </div>
+</div>
+<script>    
+    const revenue_detail_list = JSON.parse(document.getElementById('revenue_detail_list-data').textContent);
+    const ctx_b = document.getElementById('graficB').getContext('2d');
+    
+    new Chart(ctx_b, {
+      type: 'line',
+      data: revenue_detail_list,
+      options: {
+        scales: {
+                y: {
+                    beginAtZero: false,
+                },
+            },
+        }
+    });
+  </script>

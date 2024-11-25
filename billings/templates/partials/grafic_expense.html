@@ -1,0 +1,32 @@
+<div class="card">
+    <div class="card-header text-card-title">
+        Despesas
+    </div>
+    <div class="card-body">
+        <div class="card-text">
+            <div>
+                <canvas id="graficR"></canvas>
+            </div>
+        </div>        
+    </div>
+</div>
+<script>    
+    const ctx_r = document.getElementById('graficR').getContext('2d');
+    new Chart(ctx_r, {
+      type: 'line',
+      data: {
+        labels: [{% for re in resultMonth %}
+                    "{{ re.period }}",
+                {% endfor %}],
+        datasets: [
+        {
+          label: 'Despesas',
+          data: [{% for re in resultMonth %}
+                    {{ re.total|floatformat:"0" }},
+                {% endfor %}],
+          borderColor: '#1DEB7D',
+          backgroundColor: '#7EF759',
+        }]
+      },
+    });
+  </script>

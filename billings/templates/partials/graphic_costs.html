@@ -20,37 +20,62 @@
       data: {
         datasets: [{
           label: 'Pessoal',
-          data: data_revenue.staff_expenses,
+          data: 
+          [
+          {% for expense in expenseWithType %}
+            {% if expense.type == 'PESSOAS' %}
+            {{ expense.total|floatformat:"0" }},
+            {% endif %}
+          {% endfor %}
+          ],
           borderWidth: 1,
           borderColor: 'rgba(145,145,145,0.8)',
           backgroundColor: 'rgba(145,145,145,0.5)',
         },{
           label: 'Insumos',
-          data: data_revenue.input,
+          data:
+          [
+          {% for expense in expenseWithType %}
+            {% if expense.type == 'INSUMOS' %}
+            {{ expense.total|floatformat:"0" }},
+            {% endif %}
+          {% endfor %}
+          ],
           borderWidth: 1,
           borderColor: 'rgba(240,97,14,0.8)',
           backgroundColor: 'rgba(240,97,14,0.5)',
         },{
           label: 'Administrativo',
-          data: data_revenue.administrative,
+          data: 
+          [
+          {% for expense in expenseWithType %}
+            {% if expense.type == 'ADMINISTRATIVO' %}
+            {{ expense.total|floatformat:"0" }},
+            {% endif %}
+          {% endfor %}
+          ],
           borderWidth: 1,
           borderColor: 'rgba(7,17,240,0.8)',
           backgroundColor: 'rgba(7,17,240,0.5)',
         },{
-          label: 'Imposto Receita',
-          data: data_revenue.taxes_revenue,
+          label: 'Outros',
+          data: 
+          [
+          {% for expense in expenseWithType %}
+            {% if expense.type == 'OUTROS' %}
+            {{ expense.total|floatformat:"0" }},
+            {% endif %}
+          {% endfor %}
+          ],
           borderWidth: 1,
           borderColor: 'rgba(255,0,0,0.8)',
           backgroundColor: 'rgba(255,0,0,0.5)',
         }],
-        labels: data_revenue.months,
-      },
-      options: {
-        scales: {
-          y: {
-            beginAtZero: true
-          }
-        }
+        labels: [
+        {% for month in months %}
+          '{{month}}',
+        {% endfor %}
+        ],
       }
     });
   </script>
