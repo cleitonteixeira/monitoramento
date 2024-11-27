@@ -9,7 +9,6 @@ urlpatterns = [
     path('invoice/<int:id>', views.invoice, name="invoice"),
     path('costs/', views.costs, name="costs"),
     path('revenue/', views.revenue, name="revenue"),
-    path('expenses/', views.expenses, name="expenses"),
     path('dre/', views.dre, name="dre"),
     path('expenses_cr/', views.expenses_cr, name="expenses_cr"),
 ] 

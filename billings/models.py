@@ -24,14 +24,8 @@ class Supplier(models.Model):
     cnpj = models.CharField(max_length=14)
     created_at = models.DateField(auto_now_add=True)
     updated_at = models.DateField(auto_now=True)
-
-class Cost(models.Model):
-    name = models.CharField(max_length=50)
-    type = models.CharField(max_length=20)
-    period = models.DateField()
-    value = models.FloatField()
-    created_at = models.DateField(auto_now_add=True)
-    updated_at = models.DateField(auto_now=True)
+    def __str__(self):
+        return self.name
 
 class Invoice(models.Model):
     launch_id = models.CharField(max_length=12)
@@ -43,58 +37,19 @@ class Invoice(models.Model):
     created_at = models.DateField(auto_now_add=True)
     updated_at = models.DateField(auto_now=True)
 
+class FinancialTransactions(models.Model):
+    type = models.CharField(max_length=30)
+    value = models.FloatField()
+    period = models.CharField(max_length=7)
+    branch = models.ForeignKey(Branch, on_delete=models.CASCADE)
+    created_at = models.DateField(auto_now_add=True)
+    updated_at = models.DateField(auto_now=True)
+    def __str__(self):
+        return self.type
     
-class Classification(models.Model):
+class FinancialClassification(models.Model):
     name = models.CharField(max_length=50)
     created_at = models.DateField(auto_now_add=True)
     updated_at = models.DateField(auto_now=True)
     def __str__(self):
         return self.name
-
-class Dre(models.Model):
-    value = models.FloatField()
-    period = models.DateField()
-    classification_id = models.ForeignKey(Classification, on_delete=models.SET_NULL, null=True)
-    branch_id = models.ForeignKey(Branch, on_delete=models.SET_NULL, null=True)
-    created_at = models.DateField(auto_now_add=True)
-    updated_at = models.DateField(auto_now=True)
-
-class LimitExpenses(models.Model):
-    value = models.FloatField()
-    period = models.DateField()
-    branch_id = models.ForeignKey(Branch, on_delete=models.SET_NULL, null=True, blank=True, default=None),
-    created_at = models.DateField(auto_now_add=True)
-    updated_at = models.DateField(auto_now=True)
-    def __str__(self):
-        return self.value
-
-class LogLimitExpenses(models.Model):
-    value = models.FloatField()
-    period = models.DateField()
-    branch_id = models.ForeignKey(Branch, on_delete=models.CASCADE, null=True)
-    created_at = models.DateField(auto_now_add=True)
-    updated_at = models.DateField(auto_now=True)
-    def __str__(self):
-        return self.value
-    
-class Expense(models.Model):
-    type = models.CharField(max_length=30)
-    value = models.FloatField()
-    period = models.CharField(max_length=7)
-    branch = models.ForeignKey(Branch, on_delete=models.CASCADE)
-    created_at = models.DateField(auto_now_add=True)
-    updated_at = models.DateField(auto_now=True)
-    
-    def __str__(self):
-        return self.type
-    
-class Revenue(models.Model):
-    value = models.FloatField()
-    type = models.CharField(max_length=30)
-    period = models.CharField(max_length=7)
-    branch = models.ForeignKey(Branch, on_delete=models.CASCADE)
-    created_at = models.DateField(auto_now_add=True)
-    updated_at = models.DateField(auto_now=True)
-    
-    def __str__(self):
-        return self.value

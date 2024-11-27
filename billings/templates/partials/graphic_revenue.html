@@ -1,6 +1,6 @@
 <div class="card">
     <div class="card-header text-card-title">
-      Receita por Filial
+      Receita por Tipo
     </div>
     <div class="card-body">
         <div class="card-text">
@@ -15,14 +15,54 @@
     const ctx_b = document.getElementById('graficB').getContext('2d');
     
     new Chart(ctx_b, {
-      type: 'line',
-      data: revenue_detail_list,
-      options: {
-        scales: {
-                y: {
-                    beginAtZero: false,
-                },
-            },
+        type: 'bar',
+        data: {
+            datasets: [{
+                label: 'VENDA DE PRODUTOS',
+                data: 
+                    [
+                        {% for expense in expenseWithType %}
+                            {% if expense.type == 'VENDA DE PRODUTOS' %}
+                                {{ expense.total|floatformat:"0" }},
+                            {% endif %}
+                        {% endfor %}
+                    ],
+                borderWidth: 1,
+                borderColor: 'rgba(0,250,63,0.99)',
+                backgroundColor: 'rgba(0,250,63,0.8)',
+                },{
+                label: 'REVENDA DE PRODUTOS',
+                data:
+                    [
+                        {% for expense in expenseWithType %}
+                            {% if expense.type == 'REVENDA DE PRODUTOS' %}
+                                {{ expense.total|floatformat:"0" }},
+                            {% endif %}
+                        {% endfor %}
+                    ],
+                borderWidth: 1,
+                borderColor: 'rgba(250,86,8,0.99)',
+                backgroundColor: 'rgba(250,86,8,0.8)',
+                },{
+                label: 'Administrativo',
+                data: 
+                    [
+                        {% for expense in expenseWithType %}
+                            {% if expense.type == 'ADMINISTRATIVO' %}
+                                {{ expense.total|floatformat:"0" }},
+                            {% endif %}
+                        {% endfor %}
+                    ],
+                borderWidth: 1,
+                borderColor: 'rgba(0,96,122,0.99)',
+                backgroundColor: 'rgba(0,96,122,0.8)',
+                }],
+            labels: 
+            [
+                {% for month in months %}
+                    '{{month}}',
+                {% endfor %}
+            ],
         }
-    });
-  </script>
+      });
+</script>

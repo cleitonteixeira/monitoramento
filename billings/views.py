@@ -51,79 +51,19 @@ revenue_months = {
     'months' : [months for months in months]
 }
 revenue_detail_list = {
-    'labels': ['07/2024', '08/2024', '09/2024'],
+    'labels': ['07/2024', '08/2024', '09/2024','10/2024'],
     'datasets': [
         {
-            'label': '9901',
-            'data': [random.randint(100000, 200000), random.randint(100000, 200000), random.randint(100000, 200000)]
+            'label': 'VENDA DE PRODUTOS',
+            'data': [random.randint(1000000, 2000000), random.randint(1000000, 2000000), random.randint(1000000, 2000000), random.randint(1000000, 2000000)]
         },
         {
-            'label': '9902',
-            'data': [random.randint(100000, 200000), random.randint(100000, 200000), random.randint(100000, 200000)]
+            'label': 'REVENDA DE PRODUTOS',
+            'data': [random.randint(10000, 20000), random.randint(10000, 20000), random.randint(10000, 20000), random.randint(10000, 20000)]
         },
         {
-            'label': '9903',
-            'data': [random.randint(100000, 200000), random.randint(100000, 200000), random.randint(100000, 200000)]
-        },
-        {
-            'label': '9904',
-            'data': [random.randint(100000, 200000), random.randint(100000, 200000), random.randint(100000, 200000)]
-        },
-        {
-            'label': '9905',
-            'data': [random.randint(100000, 200000), random.randint(100000, 200000), random.randint(100000, 200000)]
-        },
-        {
-            'label': '9906',
-            'data': [random.randint(100000, 200000), random.randint(100000, 200000), random.randint(100000, 200000)]
-        },
-        {
-            'label': '9907',
-            'data': [random.randint(100000, 200000), random.randint(100000, 200000), random.randint(100000, 200000)]
-        },
-        {
-            'label': '9908',
-            'data': [random.randint(100000, 200000), random.randint(100000, 200000), random.randint(100000, 200000)]
-        },
-        {
-            'label': '9909',
-            'data': [random.randint(100000, 200000), random.randint(100000, 200000), random.randint(100000, 200000)]
-        },
-        {
-            'label': '9910',
-            'data': [random.randint(100000, 200000), random.randint(100000, 200000), random.randint(100000, 200000)]
-        },
-        {
-            'label': '9911',
-            'data': [random.randint(100000, 200000), random.randint(100000, 200000), random.randint(100000, 200000)]
-        },
-        {
-            'label': '9912',
-            'data': [random.randint(100000, 200000), random.randint(100000, 200000), random.randint(100000, 200000)]
-        },
-        {
-            'label': '9913',
-            'data': [random.randint(100000, 200000), random.randint(100000, 200000), random.randint(100000, 200000)]
-        },
-        {
-            'label': '9914',
-            'data': [random.randint(100000, 200000), random.randint(100000, 200000), random.randint(100000, 200000)]
-        },
-        {
-            'label': '9915',
-            'data': [random.randint(100000, 200000), random.randint(100000, 200000), random.randint(100000, 200000)]
-        },
-        {
-            'label': '9916',
-            'data': [random.randint(100000, 200000), random.randint(100000, 200000), random.randint(100000, 200000)]
-        },
-        {
-            'label': '9917',
-            'data': [random.randint(100000, 200000), random.randint(100000, 200000), random.randint(100000, 200000)]
-        },
-        {
-            'label': '9918',
-            'data': [random.randint(100000, 200000), random.randint(100000, 200000), random.randint(100000, 200000)]
+            'label': 'VENDA DE SERVICOS',
+            'data': [random.randint(50000, 90000), random.randint(50000, 90000), random.randint(50000, 90000),  random.randint(50000, 90000)]
         },
     ]
 }
@@ -365,7 +305,8 @@ data_costs = [
     ('10/2024', '9999', -563.64, 'PESSOAS')
 ]
 
-def JsonCreate(data):
+def ExpenseDataCreate(data):
+    print (data)
     register = []
     data_cr = []
     for mesano,cr,valor,descricao in data:
@@ -416,7 +357,7 @@ def atualizar_despesa(despesas, cr, mesano, tipo_despesa, novo_valor):
 
 def getExpenses(id,date):
     tExpenses = []
-    expenses = Expense.objects.filter(
+    expenses = FinancialTransactions.objects.filter(
         branch__id=id.id,
         period = datetime.strptime(date, "%Y-%m").strftime("%m/%Y")
     )
@@ -469,7 +410,7 @@ def getValueExpensePercentMonth(date,type):
     return percent
 
 def getValueEspense(id,date,type):
-    expense = Expense.objects.filter(
+    expense = FinancialTransactions.objects.filter(
         branch__id=id.id,
         period = datetime.strptime(date, "%Y-%m").strftime("%m/%Y"),
         type = type
@@ -477,22 +418,22 @@ def getValueEspense(id,date,type):
     return expense
 
 def getValueExpenseType(date,type):
-    expense = Expense.objects.filter(
+    expense = FinancialTransactions.objects.filter(
         period = datetime.strptime(date, "%Y-%m").strftime("%m/%Y"),
         type = type
     )
     return expense
 
 def getValueExpenseTypeSum(date,type):
-    expense = Expense.objects.filter(
+    expense = FinancialTransactions.objects.filter(
         period = datetime.strptime(date, "%Y-%m").strftime("%m/%Y"),
         type = type
     ).values('type').annotate(
         value=-Sum('value'))
     return expense
 
-def getTotalExpenses(id,date):
-    expenses = Expense.objects.filter(
+def getTotalExpensesForBranch(id,date):
+    expenses = FinancialTransactions.objects.filter(
         branch__id=id.id,
         period = datetime.strptime(date, "%Y-%m").strftime("%m/%Y")
     ).values('period').annotate(
@@ -500,7 +441,7 @@ def getTotalExpenses(id,date):
     return expenses
 
 def getTotalExpensesMonth(id):
-    expenses = Expense.objects.filter(
+    expenses = FinancialTransactions.objects.filter(
         branch__id=id.id
     ).values('period').annotate(
         total=-Sum('value')
@@ -511,7 +452,7 @@ def getTotalExpensesEnterprise():
     today = datetime.now().strftime('%Y-%m')
     month = calcMonth(today).strftime('%Y-%m')
     data = calcMonth(today).strftime('%m/%Y')
-    expenses = Expense.objects.filter(
+    expenses = FinancialTransactions.objects.filter(
         period=data,
         type__in=['ADMINISTRATIVO','INSUMOS','PESSOAS','OUTROS']
     ).values('period','type').annotate(
@@ -531,7 +472,7 @@ def getTotalExpensesEnterprise():
 
 def getTotalExpensesWithType():
     months = last6Months()
-    expenses = Expense.objects.filter(period__in=months, type__in=['ADMINISTRATIVO','INSUMOS','PESSOAS','OUTROS']).values('period','type').annotate(
+    expenses = FinancialTransactions.objects.filter(period__in=months, type__in=['ADMINISTRATIVO','INSUMOS','PESSOAS','OUTROS']).values('period','type').annotate(
         total=-Sum('value')
     ).order_by('period')
     
@@ -600,12 +541,6 @@ def revenue(request):
         'revenue_data' : revenue_data,
         'revenue_detail_list' : revenue_detail_list,
     })
-def expenses(request):
-    return render(request, 'pages/expenses.html',context={
-        'crs' : Branch.objects.all(),
-        'data_expenses_json' : JsonCreate(data_costs),
-    })
-    
     
 def dre(request):
     return render(request, 'pages/dre.html',context={
@@ -619,7 +554,7 @@ def expenses_cr(request):
             'crs' : Branch.objects.all(),
             'cResult': getBranch(request.POST.get('cr_select')),
             'results': getExpenses(getBranch(request.POST.get('cr_select')),request.POST.get('data')),
-            'total': getTotalExpenses(getBranch(request.POST.get('cr_select')),request.POST.get('data')),
+            'total': getTotalExpensesForBranch(getBranch(request.POST.get('cr_select')),request.POST.get('data')),
             'resultMonth':getTotalExpensesMonth(getBranch(request.POST.get('cr_select'))),
             'data': data
         })
