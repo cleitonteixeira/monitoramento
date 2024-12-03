@@ -7,12 +7,27 @@
 {{ revenue_detail_list|json_script:'revenue_detail_list-data' }}
 <div class="container-fluid">
     <div class="row">
+        <form method="post" class="row row-cols-lg-auto align-items-center mt-2 needs-validation" novalidate>
+            <div class="col-12">
+                <div class="input-group has-validation">
+                    <div class="input-group-text">Mês:</div>
+                    <input type="month" value="{{ data|date:"Y-m" }}" class="form-control" id="data" name="data" required oninput="validarData()">
+                </div>
+            </div>
+            <div class="col-12">
+                <button class="btn btn-outline-secondary" type="submit" id="btn-search"><i class="fas fa-search"></i></button>
+            </div>
+            <div class="col-12">
+                <p id="mensagem-erro" class="m-auto" style="color: red; display: none;">O mês deve ser anterior ao mês atual!</p>
+            </div>
+            {% csrf_token %}
+        </form>
         <div class="col-4 mt-2">
             <div class="mb-1">
                 {% include "partials/revenue_info.html" %}
             </div>
             <div class="">
-                {% include "partials/revenue_graphic_bar_overview.html" %}
+                {% include "partials/graphic_revenue_overview.html" %}
             </div>
         </div>
         <div class="col-8 mt-2">
@@ -21,7 +36,6 @@
             
         </div>
         <div class="w-100"></div>
-        
     </div>
 </div>
 {% endblock content %}

@@ -3,116 +3,238 @@
 {% block content %}
 {% include "partials/menu.html" %}
 <div class="container-fluid">
+    <style>
+        .table th:first-child,
+        .table td:first-child {
+        position: sticky;
+        left: 0;
+        background-color: #fff; /* Cor de fundo para evitar sobreposição visual */
+        z-index: 1; /* Garante que fique acima das outras células */
+        }
+    </style>
     <div class="row">
-        <div class="m-1 col-8">
-            <table class="table table-responsive table-bordered table-sm">
-                <thead>
-                    <tr>
-                        <th class="bg-dark text-white">DRE | UNIDADE</th>
-                        <th class="bg-dark text-white">9901</th>
-                        <th class="bg-dark text-white">9902</th>
-                        <th class="bg-dark text-white">9903</th>
-                        <th class="bg-dark text-white">9904</th>
-                        <th class="bg-dark text-white">9905</th>
-                        <th class="bg-dark text-white">9906</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td class="bg-secondary text-white">
-                            Receita Bruta
-                        </td>
-                        <td class="bg-secondary text-white">
-                            150
-                        </td>
-                        <td class="bg-secondary text-white">
-                            150
-                        </td>
-                        <td class="bg-secondary text-white">
-                            150
-                        </td>
-                        <td class="bg-secondary text-white">
-                            150
-                        </td>
-                        <td class="bg-secondary text-white">
-                            150
-                        </td>
-                        <td class="bg-secondary text-white">
-                            150
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="bg-light text-end">Revenda de Mercadorias</td>
-                        <td class="bg-light">50</td>
-                        <td class="bg-light">50</td>
-                        <td class="bg-light">50</td>
-                        <td class="bg-light">50</td>
-                        <td class="bg-light">50</td>
-                        <td class="bg-light">50</td>
-                    </tr>
-                    <tr>
-                        <td class="bg-light text-end">Venda de Produtos</td>
-                        <td class="bg-light">50</td>
-                        <td class="bg-light">50</td>
-                        <td class="bg-light">50</td>
-                        <td class="bg-light">50</td>
-                        <td class="bg-light">50</td>
-                        <td class="bg-light">50</td>
-                    </tr>
-                    <tr>
-                        <td class="bg-light text-end">Vendas de Serviços</td>
-                        <td class="bg-light">50</td>
-                        <td class="bg-light">50</td>
-                        <td class="bg-light">50</td>
-                        <td class="bg-light">50</td>
-                        <td class="bg-light">50</td>
-                        <td class="bg-light">50</td>
-                    </tr>
-                    <tr>
-                        <td class="bg-light text-end">Locação de Bens</td>
-                        <td class="bg-light">50</td>
-                        <td class="bg-light">50</td>
-                        <td class="bg-light">50</td>
-                        <td class="bg-light">50</td>
-                        <td class="bg-light">50</td>
-                        <td class="bg-light">50</td>
-                    </tr>
-                    <tr>
-                        <td class="bg-light text-end">Provisões de Receitas</td>
-                        <td class="bg-light">50</td>
-                        <td class="bg-light">50</td>
-                        <td class="bg-light">50</td>
-                        <td class="bg-light">50</td>
-                        <td class="bg-light">50</td>
-                        <td class="bg-light">50</td>
-                    </tr>
-                    <tr>
-                        <td class="bg-secondary text-white">
-                            Vendas Canceladas
-                        </td>
-                        <td class="bg-secondary text-white">
-                            150
-                        </td>
-                        <td class="bg-secondary text-white">
-                            150
-                        </td>
-                        <td class="bg-secondary text-white">
-                            150
-                        </td>
-                        <td class="bg-secondary text-white">
-                            150
-                        </td>
-                        <td class="bg-secondary text-white">
-                            150
-                        </td>
-                        <td class="bg-secondary text-white">
-                            150
-                        </td>
-                    </tr>
+        <form method="post" class="row row-cols-lg-auto align-items-center mt-2 mb-2 needs-validation" novalidate>
+            <div class="col-12">
+                <div class="input-group has-validation">
+                    <div class="input-group-text">Mês:</div>
+                    <input type="month" value="{{ data|date:"Y-m" }}" class="form-control" id="data" name="data" required oninput="validarData()">
+                </div>
+            </div>
+            <div class="col-12">
+                <button class="btn btn-outline-secondary" type="submit" id="btn-search"><i class="fas fa-search"></i></button>
+            </div>
+            <div class="col-12">
+                <p id="mensagem-erro" class="m-auto" style="color: red; display: none;">O mês deve ser anterior ao mês atual!</p>
+            </div>
+            {% csrf_token %}
+        </form>
+        <div class="mx-auto col-12">
+            <div class="table-responsive">
+                <table class="table table-bordered table-sm text-nowrap">
+                    <thead>
+                        <tr>
+                            <th scope="col" class="bg-dark text-white text-center">DRE | UNIDADE</th>
+                            {% for cr in crs %}
+                            <th scope="col" class="bg-dark text-white">{{ cr.branch__code }}</th>
+                            {% endfor %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="bg-secondary text-white">
+                                Receita Bruta
+                            </td>
 
-                </tbody>
-            </table>
+                            {% for cr in crs %}
+                                {% for item in dre %}
+                                    {% if item.branch == cr.branch__code and item.Receita_Bruta.0.branch__code == cr.branch__code %}
+                                        <td class="bg-secondary text-white p-1">
+                                            R$ {{item.Receita_Bruta.0.total|floatformat:"2g"}}
+                                        </td>
+                                    {% endif %}
+                                {% endfor %}
+                            {% endfor %}
+                           
+                        </tr>
+                        <tr>
+                            <td class="bg-light text-end">Revenda de Mercadorias</td>
+                            {% for cr in crs %}
+                                {% for item in dre %}
+                                    {% if item.branch == cr.branch__code and item.Revenda_de_Mercadorias.0.branch__code == cr.branch__code %}
+                                        <td class="bg-light p-1">
+                                            {% if not item.Revenda_de_Mercadorias.0.total == None %}
+                                                R$ {{ item.Revenda_de_Mercadorias.0.total|floatformat:"2g" }}
+                                            {% else %}
+                                                R$ 0
+                                            {% endif %}
+                                        </td>
+                                    {% endif %}
+                                {% endfor %}
+                            {% endfor %}
+                        </tr>
+                        <tr>
+                            <td class="bg-light text-end">Venda de Produtos</td>
+                            {% for cr in crs %}
+                                {% for item in dre %}
+                                    {% if item.branch == cr.branch__code and item.Vendas_de_Produtos.0.branch__code == cr.branch__code %}
+                                        <td class="bg-light">
+                                            R$ {{ item.Vendas_de_Produtos.0.total|floatformat:"2g" }}
+                                        </td>
+                                    {% endif %}
+                                {% endfor %}
+                            {% endfor %}
+                        </tr>
+                        <tr>
+                            <td class="bg-light text-end">Vendas de Serviços</td>
+                            {% for cr in crs %}
+                                {% for item in dre %}
+                                    {% if item.branch == cr.branch__code and item.Vendas_de_Servicos.0.branch__code == cr.branch__code %}
+                                        <td class="bg-light">
+                                            R$ {{ item.Vendas_de_Servicos.0.total|floatformat:"2g" }}
+                                        </td>
+                                    {% endif %}
+                                {% endfor %}
+                            {% endfor %}
+                        </tr>
+                        <tr>
+                            <td class="bg-light text-end">Locação de Bens</td>
+                            {% for cr in crs %}
+                                {% for item in dre %}
+                                    {% if item.branch == cr.branch__code and item.Locacao_de_Bens.0.branch__code == cr.branch__code %}
+                                        <td class="bg-light">
+                                            R$ {{ item.Locacao_de_Bens.0.total|floatformat:"2g" }}
+                                        </td>
+                                    {% endif %}
+                                {% endfor %}
+                            {% endfor %}
+                        </tr>
+                        <tr>
+                            <td class="bg-light text-end">Provisões de Receitas</td>
+                            {% for cr in crs %}
+                                {% for item in dre %}
+                                    {% if item.branch == cr.branch__code and item.Provisoes_de_Receitas.0.branch__code == cr.branch__code %}
+                                        <td class="bg-light">
+                                            {% if not item.Provisoes_de_Receitas.0.total == None %}
+                                                R$ {{ item.Provisoes_de_Receitas.0.total|floatformat:"2g" }}
+                                            {% else %}
+                                                R$ 0
+                                            {% endif %}
+                                        </td>
+                                    {% endif %}
+                                {% endfor %}
+                            {% endfor %}
+                        </tr>
+                        <tr>
+                            <td class="bg-secondary text-white">
+                                Vendas Canceladas
+                            </td>
+                            
+                            
+                        </tr>
+                        <tr>
+                            <td class="bg-secondary text-white">
+                                Impostos
+                            </td>
+                            <td class="bg-secondary text-white">
+                                150
+                            </td>
+                            
+                        </tr>
+                        <tr>
+                            <td class="bg-secondary text-white">
+                                Receita Lídquida
+                            </td>
+                            <td class="bg-secondary text-white">
+                                150
+                            </td>
+                            
+                        </tr>
+                        <tr>
+                            <td class="bg-secondary text-white">
+                                Custos
+                            </td>
+                            <td class="bg-secondary text-white">
+                                150
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="bg-light text-end">Outros Custos-Serv. Terc.</td>
+                            <td class="bg-light">50</td>
+                        </tr>
+                        <tr>
+                            <td class="bg-light text-end">Insumos</td>
+                            <td class="bg-light">50</td>
+                        </tr>
+                        <tr>
+                            <td class="bg-light text-end">Outros Custos</td>
+                            <td class="bg-light">50</td>
+                        </tr>
+                        <tr>
+                            <td class="bg-secondary text-white">
+                                Lucro Bruto
+                            </td>
+                            <td class="bg-secondary text-white">
+                                150
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="bg-secondary text-white">
+                                Despesas Operacionais
+                            </td>
+                            <td class="bg-secondary text-white">
+                                150
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="bg-light text-end">Despesas com Vendas</td>
+                            <td class="bg-light">50</td>
+                        </tr>
+                        <tr>
+                            <td class="bg-light text-end">Despesas com Pessoal</td>
+                            <td class="bg-light">50</td>
+                        </tr>
+                        <tr>
+                            <td class="bg-light text-end">Outras Desp. Adm.</td>
+                            <td class="bg-light">50</td>
+                        </tr>
+                        <tr>
+                            <td class="bg-secondary text-white">
+                                EBTIDA
+                            </td>
+                            <td class="bg-secondary text-white">
+                                150
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="bg-secondary text-white">
+                                Resultado Financeiro
+                            </td>
+                            <td class="bg-secondary text-white">
+                                150
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="bg-light text-end">Receitas Financeiras</td>
+                            <td class="bg-light">50</td>
+                        </tr>
+                        <tr>
+                            <td class="bg-light text-end">Despesas Financeiras</td>
+                            <td class="bg-light">50</td>
+                        </tr>
+                        <tr>
+                            <td class="bg-primary text-white">
+                                Resultado Líquido
+                            </td>
+                            <td class="bg-primary text-white">
+                                150
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
+
+
     </div>
 </div>
 {% endblock content %}

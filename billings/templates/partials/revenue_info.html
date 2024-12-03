@@ -1,9 +1,9 @@
 <div class="card">
-    <div class="card-header text-card-title">Receita Total</div>
+    <div class="card-header text-card-title">Receita Total do mês {{ revenue.0.period }}</div>
     <div class="card-body">
         <div class="card-text">
-            <span class="text-card-values">R$ {{ revenue_total|floatformat:"2g" }}</span>
-            <p class="font-monospace text-card-small">{{ revenue_percent|floatformat:"2g" }}% do mês anterior</p>
+            <span class="text-card-values">R$ {{ revenue.0.total|floatformat:"2g" }}</span>
+            <p class="font-monospace text-card-small">{{ percent|floatformat:"2g" }}% do mês anterior</p>
         </div>
     </div>
 </div>

@@ -11,7 +11,6 @@
     </div>
 </div>
 <script>    
-    const revenue_detail_list = JSON.parse(document.getElementById('revenue_detail_list-data').textContent);
     const ctx_b = document.getElementById('graficB').getContext('2d');
     
     new Chart(ctx_b, {
@@ -21,9 +20,9 @@
                 label: 'VENDA DE PRODUTOS',
                 data: 
                     [
-                        {% for expense in expenseWithType %}
-                            {% if expense.type == 'VENDA DE PRODUTOS' %}
-                                {{ expense.total|floatformat:"0" }},
+                        {% for revenue in revenue_list_type %}
+                            {% if revenue.type == 'VENDA DE PRODUTOS' %}
+                                {{ revenue.total|floatformat:"0" }},
                             {% endif %}
                         {% endfor %}
                     ],
@@ -34,9 +33,9 @@
                 label: 'REVENDA DE PRODUTOS',
                 data:
                     [
-                        {% for expense in expenseWithType %}
-                            {% if expense.type == 'REVENDA DE PRODUTOS' %}
-                                {{ expense.total|floatformat:"0" }},
+                        {% for revenue in revenue_list_type %}
+                            {% if revenue.type == 'REVENDA DE PRODUTOS' %}
+                                {{ revenue.total|floatformat:"0" }},
                             {% endif %}
                         {% endfor %}
                     ],
@@ -44,12 +43,12 @@
                 borderColor: 'rgba(250,86,8,0.99)',
                 backgroundColor: 'rgba(250,86,8,0.8)',
                 },{
-                label: 'Administrativo',
+                label: 'VENDA DE SERVICOS',
                 data: 
                     [
-                        {% for expense in expenseWithType %}
-                            {% if expense.type == 'ADMINISTRATIVO' %}
-                                {{ expense.total|floatformat:"0" }},
+                        {% for revenue in revenue_list_type %}
+                            {% if revenue.type == 'VENDA DE SERVICOS' %}
+                                {{ revenue.total|floatformat:"0" }},
                             {% endif %}
                         {% endfor %}
                     ],

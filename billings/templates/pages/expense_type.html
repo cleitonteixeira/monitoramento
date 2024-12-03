@@ -8,11 +8,11 @@
         <form method="post" class="row row-cols-lg-auto align-items-center mt-2 needs-validation" novalidate>
             <div class="col-12">
                 <div class="input-group has-validation">
-                    <div class="input-group-text">CR:</div>
-                    <select class="form-select" id="cr_select" name="cr_select" required aria-describedby="invalidCheck3Feedback">
-                        <option {% if cResult is None %}selected{% endif %} disabled value="">Escolha o CR</option>
-                        {% for cr in crs %}
-                        <option {% if cResult.code == cr.code %}selected{% endif %} value="{{cr.code}}">{{cr.code}}-{{cr.name}}</option>
+                    <div class="input-group-text">Classe:</div>
+                    <select class="form-select" id="class_select" name="class_select" required aria-describedby="invalidCheck3Feedback">
+                        <option {% if cResult is None %}selected{% endif %} disabled value="">Escolha a Classe</option>
+                        {% for type in types %}
+                        <option {% if cResult.id == type.id %}selected{% endif %} value="{{type.id}}">{{type.name}}</option>
                         {% endfor %}
                     </select>
                 </div>

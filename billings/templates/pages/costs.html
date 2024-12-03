@@ -13,6 +13,18 @@
             {% include "partials/graphic_costs.html" %}
         </div>
         <div class="mt-2 col-4">
+            <form method="post" class="row row-cols-lg-auto align-items-center mt-2 mb-2 needs-validation" novalidate>
+                <div class="col-12">
+                    <div class="input-group has-validation">
+                        <div class="input-group-text">Mês:</div>
+                        <input type="month" value="{{ data|date:"Y-m" }}" class="form-control" id="data" name="data" required oninput="validarData()">
+                    </div>
+                </div>
+                <div class="col-12">
+                    <button class="btn btn-outline-success" type="submit" id="btn-search"><i class="fas fa-search"></i></button>
+                </div>
+                {% csrf_token %}
+            </form>
             <div class="mb-2">
                 {% include "partials/detail_costs.html" %}
             </div>
@@ -24,6 +36,7 @@
                     <div class="card-body">
                         {% comment %} <a href="{% url "billings:expenses" %}" class="btn btn-dark">Detalhes Despesas</a> {% endcomment %}
                         <a href="{% url "billings:expenses_cr" %}" class="btn btn-outline-secondary">Despesas por CR</a>
+                        <a href="{% url "billings:expenses_type" %}" class="btn btn-outline-danger">Despesas por Tipo de CR</a>
                     </div>
                 </div>
             </div>

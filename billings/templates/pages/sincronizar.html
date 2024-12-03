@@ -1,0 +1,65 @@
+{% extends "global/base.html" %}
+{% block title %}Sincronizar Dados | {% endblock title %}
+{% block content %}
+{% include "partials/menu.html" %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-6 mt-2">
+            <div class="card">
+                <div class="card-header text-card-title text-center">Atualização de Lançamentos Contábeis</div>
+                <div class="card-body">
+                    <div class="card-text">
+                        <form method="post" class="row row-cols-lg-auto align-items-center mt-2 mb-2 needs-validation" novalidate>
+                            <div class="col-12">
+                                <div class="input-group has-validation">
+                                    <div class="input-group-text">Mês:</div>
+                                    <input type="month" value="{{ date|date:"Y-m" }}" class="form-control" id="data" name="data" required oninput="validarData()">
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <button class="btn btn-outline-success" type="submit" id="btn-search">Atualizar <i class="fas fa-sync"></i></button>
+                            </div>
+                            <input type="hidden" name="sinc" value="sincronizar">
+                            {% csrf_token %}
+                        </form>
+                    </div>
+                    <div class="card-footer">
+                        Selecione o mês desejado e clique no botão para atualizar a base dos lançametnos contábeis.
+                    </div>
+                </div>
+            </div>
+        </div>
+        <style>
+            .table th{
+            position: sticky;
+            top: 0;
+            z-index: 1; /* Garante que fique acima das outras células */
+            }
+        </style>
+        <div class="col-6 mt-2">
+            <div class="table-responsive table-cr">
+                <table class="table table-bordered table-sm table-striped">
+                    <thead>
+                        <tr>
+                            <th class="p-3 mb-2 bg-secondary text-white">ID</th>
+                            <th class="p-3 mb-2 bg-secondary text-white">CODIGO</th>
+                            <th class="p-3 mb-2 bg-secondary text-white">NOME</th>
+                            <th class="p-3 mb-2 bg-secondary text-white">TIPO</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for cr in crs %}
+                        <tr>
+                            <td>{{cr.id}}</td>
+                            <td>{{cr.code}}</td>
+                            <td>{{cr.name}}</td>
+                            <td>{{cr.type.name}}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

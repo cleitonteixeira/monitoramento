@@ -11,4 +11,6 @@ urlpatterns = [
     path('revenue/', views.revenue, name="revenue"),
     path('dre/', views.dre, name="dre"),
     path('expenses_cr/', views.expenses_cr, name="expenses_cr"),
+    path('expenses_type/', views.expenses_type, name="expenses_type"),
+    path('sincronize/', views.sincronize, name="sincronize"),
 ] 

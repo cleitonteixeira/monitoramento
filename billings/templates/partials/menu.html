@@ -23,6 +23,15 @@
                           <li><a class="dropdown-item {% if 'dre' in request.path %}active{% endif %}" href="{% url "billings:dre" %}">DRE</a></li>
                         </ul>
                     </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Administração
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                          <li><a class="nav-link" target="_blank" aria-current="page" href="{% url "admin:index" %}">Área Administrativa</a></li>
+                          <li><a class="dropdown-item {% if 'sincronize' in request.path %}active{% endif %}" href="{% url "billings:sincronize" %}">Sincronização</a></li>
+                        </ul>
+                    </li>
                 </ul>
                 <span class="navbar-text">
                     {% if user.is_authenticated %}Bem Vindo, {{ user.first_name }}!{% endif %}

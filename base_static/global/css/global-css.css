@@ -32,3 +32,15 @@
 /* .nav-shadow{
     box-shadow: 1px 4px rgba(0, 0, 0, 0.05) !important;
 } */
+
+.table-left-column{
+    position: sticky;
+    left: 0;
+    background: #0a7725; /* Cor de fundo para evitar sobreposição visual */
+    z-index: 1; /* Garante que fique acima das outras células */
+  }
+
+.table-cr{
+    max-height: 30rem !important;
+    overflow-y: auto !important;
+}

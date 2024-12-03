@@ -11,8 +11,6 @@
     </div>
 </div>
 <script>    
-    const data_revenue = JSON.parse(document.getElementById('data-rel').textContent);
-
     const ctx = document.getElementById('graficG').getContext('2d');
 
     new Chart(ctx, {
@@ -57,19 +55,6 @@
           borderWidth: 1,
           borderColor: 'rgba(0,96,122,0.99)',
           backgroundColor: 'rgba(0,96,122,0.8)',
-        },{
-          label: 'Outros',
-          data: 
-          [
-          {% for expense in expenseWithType %}
-            {% if expense.type == 'OUTROS' %}
-            {{ expense.total|floatformat:"0" }},
-            {% endif %}
-          {% endfor %}
-          ],
-          borderWidth: 1,
-          borderColor: 'rgba(154,0,250,0.99)',
-          backgroundColor: 'rgba(154,0,250,0.8)',
         }],
         labels: [
         {% for month in months %}
