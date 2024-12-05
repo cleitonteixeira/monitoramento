@@ -1,12 +1,13 @@
-from django.shortcuts import render
+from django.shortcuts import render,redirect
 from django.db.models import Sum, Q
 from django.db.models.functions import TruncMonth
-from django.http import HttpResponse
+from django.http import HttpResponse,JsonResponse
+from flask import Flask, request
 from datetime import datetime, timedelta
 from .models import *
 import pandas as pd
 import calendar
-import random
+import openpyxl
 
 from . import completaBD
 from . import completDRE
@@ -392,16 +393,171 @@ def expenses_cr(request):
     
 def sincronize(request):
     date = datetime.now()
-    if request.POST.get('sinc') == 'sincronizar':
+    if request.POST.get('sinc') == 'sinc_eventos':
+        SincEvents(request.FILES['file'])
+        return render(request, 'pages/sincronizar.html', context={
+            'crs' : Branch.objects.all(),
+            'date': date
+        })
+    elif request.POST.get('sinc') == 'sinc_colaborador':
+        SincColaborador(request.FILES['file'])
+        return render(request, 'pages/sincronizar.html', context={
+            'crs' : Branch.objects.all(),
+            'date': date
+        })
+    elif request.POST.get('sinc') == 'sinc_ctbl':
         date = datetime.strptime(request.POST.get('data'), '%Y-%m')
         dados = completaBD.consulta(date.strftime("%m/%Y"))
         defExpensesWithMonth(date.strftime("%m/%Y"))
         for dado in dados:
             saveFinancialTransactions(dado)
-    return render(request, 'pages/sincronizar.html', context={
-        'crs' : Branch.objects.all(),
-        'date': date
+        return render(request, 'pages/sincronizar.html', context={
+            'crs' : Branch.objects.all(),
+            'date': date
+        })
+    elif request.POST.get('sinc') == 'sinc_history_events':
+        eventos = SincHistoryEvents(request.FILES['file'])
+        return render(request, 'pages/sincronizar.html', context={
+            'crs' : Branch.objects.all(),
+            'date': date,
+            'eventos': eventos
+        })
+    elif request.POST.get('sinc') == 'del_history_events':
+        EventHistory.objects.all().delete()
+        return render(request, 'pages/sincronizar.html', context={
+            'crs' : Branch.objects.all(),
+            'date': date,
+            'del': "Historico Removido"
+        })
+    else:
+        return render(request, 'pages/sincronizar.html', context={
+            'crs' : Branch.objects.all(),
+            'date': date
+        })
+def ConvertDate(date):
+    try:
+        return datetime.strptime(date, "%d/%m/%Y").strftime("%Y-%m-%d")
+    except (ValueError, TypeError):
+        return None
+
+def getBranch(code):
+    try:
+        return Branch.objects.get(code=code)
+    except Exception as e:
+        return None
+
+def getCooperator(link):
+    try:
+        return Cooperators.objects.get(link=link)
+    except Exception as e:
+        return None
+
+def SincColaborador(file):
+    df = pd.read_excel(file)
+    lista = df.values.tolist()
+    for l in lista:
+        code = l[12][0:4]
+        colab = Cooperators(
+            name = l[3],
+            cpf = l[4].replace('.','').replace('-',''),
+            admission = datetime.strptime(l[6], "%d/%m/%Y").strftime("%Y-%m-%d"),
+            ocupation = l[10],
+            birthdate = datetime.strptime(l[8], "%d/%m/%Y").strftime("%Y-%m-%d"),
+            cod = l[1],
+            link = l[0],
+            type = l[5],
+            sex = l[9],
+            branch = getBranch(code),
+            demission = ConvertDate(l[7]),
+            situation = l[11]
+        )
+        if not Cooperators.objects.filter(link = l[0]).exists():
+            try:
+                colab.save()
+                print("Salvo")
+            except Exception as e:
+                print(e)
+        else:
+            colaborador = Cooperators.objects.get(link = l[0])
+            colaborador.name = l[3]
+            colaborador.ocupation = l[10]
+            colaborador.branch =  getBranch(code)
+            colaborador.demission = ConvertDate(l[7])
+            colaborador.situation = l[11]
+            try:
+                colaborador.save()
+                print("Registro Atualizado")
+            except Exception as e:
+                print(e)
+    
+def SincEvents(file):
+    df = pd.read_excel(file)
+    lista = df.values.tolist()
+    for l in lista:
+        event = Events(
+            cod = l[0],
+            name = l[1],
+            typeEvent = l[2],
+            demonstrative = l[3] == "Sim"
+        )
+        try:
+            event.save()
+            print("Salvo")
+        except Exception as e:
+            print(e)
+
+def getEvent(cod):
+    try:
+        return Events.objects.get(cod=cod)
+    except Exception as e:
+        return None
+
+def history(request):
+    print (request.session.get('eventos'))
+    return render(request, 'pages/history.html',context={
+        'eventos': request.session.get('eventos')
     })
+
+def SincHistoryEvents(file):
+    event_error = []
+    cont = 0
+    falha = 0
+    df = pd.read_excel(file)
+    lista = df.values.tolist()
+    for l in lista:
+        event = EventHistory(
+            cooperator = getCooperator(l[0]),
+            event = getEvent(l[9]),
+            competence = ConvertDate(l[26]),
+            movement = l[11],
+            occurrence = ConvertDate(l[16]),
+            valuereference = l[13],
+            value = l[14]
+        )
+        try:
+            if not EventHistory.objects.filter(
+                    cooperator = getCooperator(l[0]),
+                    event = getEvent(l[9]),
+                    movement = l[11],
+                    competence = ConvertDate(l[16]),
+                    value = l[14]
+                ).exists():
+                event.save()
+                cont += 1
+                print("Salvo")
+            else:
+                event_error.append(event)
+                falha += 1
+                print("Ja Existe")
+        except Exception as e:
+            event_error.append(event)
+            falha += 1
+    retorno = {
+        'cont': cont,
+        'falha': falha,
+        'event_error': event_error
+    }
+    return retorno
 
 def saveFinancialTransactions(data):
     if Branch.objects.filter(code=data[1]).exists():
@@ -419,19 +575,15 @@ def saveFinancialTransactions(data):
             print("Ja Existe")
     return
 
-
-
-
 def expenses_type(request):
     if request.POST.get('class_select') is not None:
         data = datetime.strptime(request.POST.get('data'), '%Y-%m')
-        print(request.POST.get('class_select'))
         return render(request, 'pages/expense_type.html',context={
             'types' : TypeBranch.objects.all(),
             'cResult': getBranchWithType(request.POST.get('class_select')),
-            'results': getExpenses(getBranchWithType(request.POST.get('class_select')),request.POST.get('data')),
-            'total': getTotalExpensesForBranch(getBranchWithType(request.POST.get('class_select')),request.POST.get('data')),
-            'resultMonth':getTotalExpensesMonth(getBranchWithType(request.POST.get('class_select'))),
+            'results': getExpensesWithType(getBranchWithType(request.POST.get('class_select')),request.POST.get('data')),
+            'total': getTotalExpensesForType(getBranchWithType(request.POST.get('class_select')),request.POST.get('data')),
+            'resultMonth':getTotalExpensesMonthType(getBranchWithType(request.POST.get('class_select'))),
             'data': data
         })
     else:
@@ -442,3 +594,65 @@ def expenses_type(request):
 def getBranchWithType(id):
     branch = Branch.objects.filter(type__id=id).all()
     return branch
+
+def getExpensesWithType(branch,date):
+    tExpenses = []
+    expenses = FinancialTransactions.objects.filter(
+        branch__in=branch,
+        period = datetime.strptime(date, "%Y-%m").strftime("%m/%Y"),
+        type__in=['ADMINISTRATIVO','INSUMOS','PESSOAS']
+    )
+    for expense in expenses:
+        percent = getValueExpensePercentWithType(branch,date,expense.type)
+        exs = {
+                'type': expense.type,
+                'value': expense.value*(-1),
+                'percent': percent
+            }
+        tExpenses.append(exs)
+    return tExpenses
+    
+def getValueExpensePercentWithType(branch,date,type):
+    month = calcMonth(date).strftime("%Y-%m")
+    lastValue =  getValueExpenseWithType(branch,month,type).first()
+    if lastValue:
+        lastValue = lastValue.value
+    else:
+        lastValue = 0
+    atualValue = getValueExpenseWithType(branch,date,type).first().value
+    if lastValue != 0:
+        percent = calc_percent(
+                atualValue,
+                lastValue
+            )
+    else:
+        percent = 0
+    return percent
+
+def getValueExpenseWithType(branch,date,type):
+    expense = FinancialTransactions.objects.filter(
+        branch__in=branch,
+        period = datetime.strptime(date, "%Y-%m").strftime("%m/%Y"),
+        type = type
+    )
+    return expense
+
+def getTotalExpensesForType(branch,date):
+    expenses = FinancialTransactions.objects.filter(
+        branch__in=branch,
+        period = datetime.strptime(date, "%Y-%m").strftime("%m/%Y"),
+        type__in=['ADMINISTRATIVO','INSUMOS','PESSOAS']
+    ).values('period').annotate(
+        value=-Sum('value'))
+    return expenses
+
+def getTotalExpensesMonthType(branch):
+    months = last6Months()
+    expenses = FinancialTransactions.objects.filter(
+        branch__in=branch,
+        period__in=months,
+        type__in=['ADMINISTRATIVO','INSUMOS','PESSOAS']
+    ).values('period').annotate(
+        total=-Sum('value')
+    ).order_by('period')[:6]
+    return expenses

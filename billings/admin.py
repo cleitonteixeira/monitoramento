@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Branch, TypeBranch, FinancialTransactions, FinancialClassification
+from .models import *
 
 
 @admin.register(Branch)
@@ -16,4 +16,16 @@ class FinancialClassificationAdmin(admin.ModelAdmin):
     
 @admin.register(FinancialTransactions)
 class FinancialTransactionsAdmin(admin.ModelAdmin):
+    ...
+    
+@admin.register(Cooperators)
+class CooperatorsAdmin(admin.ModelAdmin):
+    ...
+
+@admin.register(Events)
+class EventsAdmin(admin.ModelAdmin):
+    ...
+    
+@admin.register(EventHistory)
+class EventHistoryAdmin(admin.ModelAdmin):
     ...

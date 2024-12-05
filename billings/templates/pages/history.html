@@ -1,0 +1,50 @@
+{% extends "global/base.html" %}
+{% block title %}DRE | {% endblock title %}
+{% block content %}
+{% include "partials/menu.html" %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            {{eventos}}
+            <div class="table-responsive mt-2">
+                <table class="table table-striped table-sm table-bordered text-nowrap">
+                    <thead class="text-small">
+                        <tr>
+                            <th>CR</th>
+                            <th>NOME</th>
+                            <th>ADMISSÃO</th>
+                            <th>DEMISSÃO</th>
+                            <th>SITUAÇÃO</th>
+                            <th>Nº EVENTO</th>
+                            <th>EVENTO</th>
+                            <th>VALOR REFERENCIA</th>
+                            <th>VALOR</th>
+                            <th>COMPETENCIA</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-small">
+                        {% for event in events %}
+                            <tr>
+                                <td>{{event.cooperator.branch.code}}-{{event.cooperator.branch.name}}</td>
+                                <td>{{event.cooperator.name}}</td>
+                                <td>{{event.cooperator.admission|date:"d/m/Y"}}</td>
+                                <td>
+                                    {% if event.cooperator.demission is not None %}
+                                        {{event.cooperator.demission|date:"d/m/Y"}}
+                                    {% endif %}
+                                </td>
+                                <td>{{event.cooperator.situation}}</td>
+                                <td>{{event.event.cod}}</td>
+                                <td>{{event.event.name}}</td>
+                                <td>{{event.valuereference|floatformat:"2"}}</td>
+                                <td>R$ {{event.value|floatformat:"2g"}}</td>
+                                <td>{{event.competence|date:"d/m/Y"}}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

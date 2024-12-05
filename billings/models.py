@@ -52,7 +52,6 @@ class Invoice(models.Model):
     supplier = models.ForeignKey(Supplier, on_delete=models.SET_NULL, null=True)
     created_at = models.DateField(auto_now_add=True)
     updated_at = models.DateField(auto_now=True)
-
     def __str__(self):
         return f"{self.branch.code} - {self.supplier.name} - {self.type} - {self.value}"
     
@@ -82,3 +81,59 @@ class FinancialClassification(models.Model):
     updated_at = models.DateField(auto_now=True)
     def __str__(self):
         return self.name
+
+class Cooperators(models.Model):
+    name = models.CharField("Nome",max_length=50)
+    cpf = models.CharField("CPF",max_length=11)
+    admission = models.DateField("Admissão")
+    ocupation = models.CharField("Cargo",max_length=50)
+    birthdate = models.DateField("Data de nascimento")
+    cod = models.IntegerField("Matrícula",unique=True)
+    link = models.IntegerField("Vínculo",unique=True)
+    type = models.CharField("Tipo de Contrato",max_length=30)
+    sex = models.CharField("Sexo",max_length=30,null=True)
+    branch = models.ForeignKey(Branch, on_delete=models.SET_NULL, null=True, verbose_name="Filial")
+    demission = models.DateField("Demissão",null=True)
+    situation = models.CharField("Sitaução Funcional",max_length=30)
+    created_at = models.DateField(auto_now_add=True)
+    updated_at = models.DateField(auto_now=True)
+    def __str__(self):
+        return f"{self.cod} - {self.name} - {self.cpf} - {self.ocupation} - {self.admission}"
+    
+    class Meta:
+        ordering = ['name']
+        verbose_name_plural = 'colaboradores'
+        verbose_name = 'colaborador'
+    
+class Events(models.Model):
+    cod = models.IntegerField(unique=True)
+    name = models.CharField(max_length=50)
+    typeEvent = models.CharField(max_length=30)
+    demonstrative = models.BooleanField()
+    created_at = models.DateField(auto_now_add=True)
+    updated_at = models.DateField(auto_now=True)
+    def __str__(self):
+        return f"{self.cod} - {self.name} - {self.typeEvent} - {self.demonstrative}"
+    
+    class Meta:
+        ordering = ['cod']
+        verbose_name_plural = 'eventos'
+        verbose_name = 'evento'
+
+class EventHistory(models.Model):
+    cooperator = models.ForeignKey(Cooperators, on_delete=models.CASCADE)
+    event = models.ForeignKey(Events, on_delete=models.CASCADE)
+    movement = models.CharField(max_length=30,null=True)
+    occurrence = models.DateField(null=True)
+    competence = models.DateField()
+    valuereference = models.FloatField()
+    value = models.FloatField()
+    created_at = models.DateField(auto_now_add=True)
+    updated_at = models.DateField(auto_now=True)
+    def __str__(self):
+        return f"{self.cooperator.cod}- {self.cooperator.name}- {self.competence} - {self.event.cod} - {self.event.name}"
+    
+    class Meta:
+        ordering = ['competence','cooperator','event']
+        verbose_name_plural = 'histórico de eventos'
+        verbose_name = 'histórico de evento'
