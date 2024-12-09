@@ -1,0 +1,198 @@
+{% extends "global/base.html" %}
+{% block title %}Grupo de Eventos | {% endblock title %}
+{% block content %}
+{% include "partials/menu.html" %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-4">
+            {% include "partials/form_group.html" %}
+            {% if not response.status_code == 200 %}
+                <div class="col-12 mt-3">
+                    <div class="alert d-flex align-items-center alert-dismissible fade
+                    {% if response.status_code == 400 %}
+                        alert-danger show
+                    {% elif response.status_code == 201 %}
+                        alert-success show
+                    {% elif response.status_code == 204 %}
+                        alert-warning show
+                    {% endif %}
+                    " role="alert">
+                        {% if response.status_code == 400 %}
+                            <div class="p-1">
+                                <i class="fas fa-exclamation-triangle"></i>
+                            </div>
+                            <div class="p-1">
+                                Falha no cadastro.
+                            </div>
+                        {% elif response.status_code == 201 %}
+                            <div class="p-1">
+                                <i class="fas fa-check"></i>
+                            </div>
+                            <div class="p-1">
+                                Cadastrado/Atualizado
+                            </div>
+                        {% elif response.status_code == 204 %}
+                            <div class="p-1">
+                                <i class="fas fa-check"></i>
+                            </div>
+                            <div class="p-1">
+                                Removido
+                            </div>
+                        {% endif %}
+
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                </div>
+            {% endif %}
+            <div class="table-responsive mt-2">
+                <table class="table table-bordered table-striped table-sm">
+                    <thead>
+                        <tr>
+                            <th class="p-1 mb-2 bg-success text-white text-center">NOME</th>
+                            <th class="p-1 mb-2 bg-success text-white text-center">AÇÃO</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if groups %}
+                            {% for group in groups %}
+                                <tr>
+                                    <td>{{ group.name }}</td>
+                                    <td class="d-flex">
+                                        <form action="" class="m-auto">
+                                            <input type="hidden" name="id" value="{{ group.id }}">
+                                            <input type="hidden" name="action" value="edit">
+                                            <button class="btn btn-sm btn-warning" title="Editar"><i class="fas fa-edit"></i></button>
+                                        </form>
+
+                                        <form action="" method="post" class="m-auto">
+                                            <input type="hidden" name="id" value="{{ group.id }}">
+                                            <input type="hidden" name="action" value="remove">
+                                            {% csrf_token %}
+                                            <button class="btn btn-sm btn-danger" title="Remover"><i class="fas fa-trash-alt"></i></button>
+                                        </form>
+
+                                        <form action="" class="m-auto" method="post">
+                                            <input type="hidden" name="id" value="{{ group.id }}">
+                                            <input type="hidden" name="action" value="list">
+                                            {% csrf_token %}
+                                            <button class="btn btn-sm btn-secondary" title="Listar"><i class="fas fa-list"></i></button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="2" class="text-center">
+                                    SEM DADOS
+                                </td>
+                            </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% if list %}
+            <div class="col-8 mt-2">
+                <div class="d-flex">
+                    <form class="row row-cols-lg-auto align-items-center mt-2 needs-validation" novalidate method="post">
+                        <div class="dropdown">
+                            <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                                Lista de Eventos
+                            </button>
+                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            <!-- Campo de busca -->
+                                <input type="text" class="form-control mb-2" id="dropdownSearch" placeholder="Search...">
+                            
+                                <!-- Lista de checkboxes -->
+                                <div id="checkboxList">
+                                    {% for event in listEventos %}
+                                        <div class="form-check text-nowrap">
+                                            <input class="form-check-input" type="checkbox" name="eventos[]" value="{{ event.id }}" id="checkbox_{{ event.id }}">
+                                            <label class="form-check-label" for="checkbox_{{ event.id }}">{{ event.name }}</label>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                        <input type="hidden" name="listaGrupo" value="salvar">
+                        <input type="hidden" name="grupo_id" value="{{ grupo.id }}">
+                        {% csrf_token %}
+                        <button class="btn btn-success" type="submit">Salvar</button>
+                    </form>
+                </div>
+                <div class="table-resposive mt-2">
+                    <table class="table table-bordered table-striped table-sm">
+                        <thead>
+                            <tr>
+                                <th colspan="5">Eventos do Grupo: {{ grupo }}</th>
+                            </tr>
+                            <tr>
+                                <th>COD</th>
+                                <th>DESCRIÇÃO</th>
+                                <th>TIPO</th>
+                                <th>DEMONSTRATIVO</th>
+                                <th>REMOVER</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% if eventos is not None %}
+                                {% for event in eventos %}
+                                    <tr>
+                                        <td>{{ event.event.cod }}</td>
+                                        <td>{{ event.event.name }}</td>
+                                        <td>{{ event.event.typeEvent }}</td>
+                                        <td>{% if event.event.demonstrative %}Sim{% else %}Não{% endif %}</td>
+                                        <td>
+                                            <form action="" method="post" class="m-auto">
+                                                <input type="hidden" name="idGrupo" value="{{ event.id }}">
+                                                <input type="hidden" name="listaGrupo" value="remover">
+                                                <input type="hidden" name="grupo_id" value="{{ grupo.id }}">
+
+                                                {% csrf_token %}
+                                                <button class="btn btn-sm btn-danger" title="Remover"><i class="fas fa-trash-alt"></i></button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            {% else %}
+                            <tr>
+                                <td colspan="5">Sem dados</td>
+                            </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>    
+            </div>
+        {% endif %}
+    </div>
+</div>
+<style>
+    .lista_teste {
+        heigt: 200px !important;
+        overflow-y: auto !important;
+    }
+</style>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+      // Captura o input de busca e a lista de checkboxes
+      const searchInput = document.getElementById("dropdownSearch");
+      const checkboxList = document.getElementById("checkboxList");
+  
+      // Adiciona evento de digitação no campo de busca
+      searchInput.addEventListener("keyup", function () {
+        const filter = searchInput.value.toLowerCase();
+        const checkboxes = checkboxList.getElementsByClassName("form-check");
+  
+        // Loop nas opções e filtra as que combinam com o texto digitado
+        for (let i = 0; i < checkboxes.length; i++) {
+          const label = checkboxes[i].getElementsByTagName("label")[0];
+          if (label.textContent.toLowerCase().includes(filter)) {
+            checkboxes[i].style.display = ""; // Mostra o item
+          } else {
+            checkboxes[i].style.display = "none"; // Oculta o item
+          }
+        }
+      });
+    });
+  </script>
+{% endblock content %}

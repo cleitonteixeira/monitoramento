@@ -29,3 +29,7 @@ class EventsAdmin(admin.ModelAdmin):
 @admin.register(EventHistory)
 class EventHistoryAdmin(admin.ModelAdmin):
     ...
+
+@admin.register(EventsByGroup)
+class EventsByGroupAdmin(admin.ModelAdmin):
+    ...

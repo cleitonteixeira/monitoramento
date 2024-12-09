@@ -10,7 +10,7 @@
                 <div class="input-group has-validation">
                     <div class="input-group-text">CR:</div>
                     <select class="form-select" id="cr_select" name="cr_select" required aria-describedby="invalidCheck3Feedback">
-                        <option {% if cResult is None %}selected{% endif %} disabled value="">Escolha o CR</option>
+                        <option {% if cResult is None %}selected{% endif %} disabled>Escolha o CR</option>
                         {% for cr in crs %}
                         <option {% if cResult.code == cr.code %}selected{% endif %} value="{{cr.code}}">{{cr.code}}-{{cr.name}}</option>
                         {% endfor %}
@@ -36,7 +36,7 @@
             <div class="row">
                 <div class="col-12">
                     <p class="lead">
-                        Despesas do CR <strong>{{ cResult.code }} - {{ cResult.name }}</strong> do mês 
+                        Despesas do CR <strong>{{ cResult.code }} - {{ cResult.name }} - {{cResult.type.name}}</strong> do mês 
                         <strong>{{data|date:"m/Y"}}</strong> foi no valor de R$ <strong>{{ total.0.value|floatformat:"2g" }}</strong>.
                     </p>
                     <div class="row">

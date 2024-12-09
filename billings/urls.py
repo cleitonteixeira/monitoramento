@@ -14,4 +14,6 @@ urlpatterns = [
     path('expenses_type/', views.expenses_type, name="expenses_type"),
     path('sincronize/', views.sincronize, name="sincronize"),
     path('history/', views.history, name="history"),
+    path('hora_extra/', views.HoraExtras, name="hora_extra"),
+    path('group_events/', views.groupEvents, name="group_events"),
 ] 

@@ -1,0 +1,44 @@
+<div class="card">
+    <div class="card-header text-card-title">
+      {{v.name}}
+    </div>
+    <div class="card-body">
+        <div class="card-text">
+            <div>
+                <canvas id="{{v.name.id}}"></canvas>
+            </div>
+        </div>        
+    </div>
+</div>
+<script>
+    const ctx_{{v.name.id}} = document.getElementById('{{v.name.id}}').getContext('2d');
+    new Chart(ctx_{{v.name.id}}, {
+      type: 'bar',
+      data: {
+        labels: [
+        {% for v1 in v.values %}
+          '{{ v1.competence|date:"d/m/Y" }}',
+        {% endfor %}
+        ],
+        datasets: [
+        {
+          label: '{{v.name}}',
+          data: [
+          {% for v1 in v.values %}
+            {{ v1.total|floatformat:"0" }},
+          {% endfor %}
+          ],
+          borderWidth: 1,
+          borderColor: 'rgba(61,130,219,0.75)',
+          backgroundColor: 'rgba(61,130,219,0.5)',
+        }],
+      },
+      options: {
+        scales: {
+          y: {
+            beginAtZero: false
+          }
+        },
+      }
+    });
+  </script>

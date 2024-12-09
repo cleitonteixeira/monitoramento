@@ -29,6 +29,8 @@
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                           <li><a class="dropdown-item {% if 'history' in request.path %}active{% endif %}" href="{% url "billings:history" %}">Historico de Eventos</a></li>
+                          <li><a class="dropdown-item {% if 'hora_extra' in request.path %}active{% endif %}" href="{% url "billings:hora_extra" %}">Hora Extra</a></li>
+                          <li><a class="dropdown-item {% if 'group_events' in request.path %}active{% endif %}" href="{% url "billings:group_events" %}">Grupos de Eventos</a></li>
                         </ul>
                     </li>
                     <li class="nav-item dropdown">

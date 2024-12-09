@@ -107,9 +107,7 @@ def getValueExpensePercent(id,date,type):
     return percent
 
 def getValueExpensePercentMonth(date,type):
-    print (date.strftime("%Y-%m"))
     month = calcMonth(date.strftime("%Y-%m"))
-    print (month)
     lastValue =  getValueExpenseTypeSum(month,type)
     if lastValue:
         lastValue = lastValue
@@ -168,6 +166,17 @@ def getTotalExpensesMonth(id):
     ).order_by('period')[:6]
     return expenses
 
+def getTotalExpensesTypeMonth(id):
+    months = last6Months()
+    expenses = FinancialTransactions.objects.filter(
+        branch__in=id,
+        period__in=months,
+        type__in=['ADMINISTRATIVO','INSUMOS','PESSOAS']
+    ).values('period').annotate(
+        total=-Sum('value')
+    ).order_by('period')[:6]
+    return expenses
+
 def getTotalExpensesEnterprise(data):
     today = data.strftime("%m/%Y")
     expenses = FinancialTransactions.objects.filter(
@@ -216,7 +225,13 @@ def last6Months():
 
 def calcMonth(nMonth):
     pMonth = datetime.strptime(nMonth, "%Y-%m")
-    lDay = calendar.monthrange(pMonth.year, pMonth.month - 1)[1]
+    if pMonth.month == 1:
+        previous_year = pMonth.year - 1
+        previous_month = 12
+    else:
+        previous_year = pMonth.year
+        previous_month = pMonth.month - 1
+    lDay = calendar.monthrange(previous_year, previous_month)[1]
     oneMonth = timedelta(days=lDay)
     pMonth = pMonth - oneMonth
     return pMonth
@@ -513,7 +528,6 @@ def getEvent(cod):
         return None
 
 def history(request):
-    print (request.session.get('eventos'))
     return render(request, 'pages/history.html',context={
         'eventos': request.session.get('eventos')
     })
@@ -580,10 +594,10 @@ def expenses_type(request):
         data = datetime.strptime(request.POST.get('data'), '%Y-%m')
         return render(request, 'pages/expense_type.html',context={
             'types' : TypeBranch.objects.all(),
-            'cResult': getBranchWithType(request.POST.get('class_select')),
+            'cResult': getTypeBranch(request.POST.get('class_select')),
             'results': getExpensesWithType(getBranchWithType(request.POST.get('class_select')),request.POST.get('data')),
             'total': getTotalExpensesForType(getBranchWithType(request.POST.get('class_select')),request.POST.get('data')),
-            'resultMonth':getTotalExpensesMonthType(getBranchWithType(request.POST.get('class_select'))),
+            'resultMonth':getTotalExpensesTypeMonth(getBranchWithType(request.POST.get('class_select'))),
             'data': data
         })
     else:
@@ -595,38 +609,41 @@ def getBranchWithType(id):
     branch = Branch.objects.filter(type__id=id).all()
     return branch
 
+def getTypeBranch(id):
+    type = TypeBranch.objects.get(id=id)
+    return type
+
 def getExpensesWithType(branch,date):
     tExpenses = []
     expenses = FinancialTransactions.objects.filter(
         branch__in=branch,
         period = datetime.strptime(date, "%Y-%m").strftime("%m/%Y"),
         type__in=['ADMINISTRATIVO','INSUMOS','PESSOAS']
-    )
+    ).values('type').annotate(
+        value=-Sum('value')
+    )    
     for expense in expenses:
-        percent = getValueExpensePercentWithType(branch,date,expense.type)
+        percent = getValueExpensePercentWithType(branch,date,expense['type'])
         exs = {
-                'type': expense.type,
-                'value': expense.value*(-1),
+                'type': expense['type'],
+                'value': expense['value'],
                 'percent': percent
             }
         tExpenses.append(exs)
     return tExpenses
     
 def getValueExpensePercentWithType(branch,date,type):
+    percent = 0
     month = calcMonth(date).strftime("%Y-%m")
-    lastValue =  getValueExpenseWithType(branch,month,type).first()
+    lastValue =  getValueExpenseWithType(branch,month,type)
     if lastValue:
-        lastValue = lastValue.value
-    else:
-        lastValue = 0
-    atualValue = getValueExpenseWithType(branch,date,type).first().value
-    if lastValue != 0:
+        lastValue = lastValue[0]['value']
+        atualValue = getValueExpenseWithType(branch,date,type)[0]['value']
         percent = calc_percent(
                 atualValue,
                 lastValue
             )
-    else:
-        percent = 0
+
     return percent
 
 def getValueExpenseWithType(branch,date,type):
@@ -634,6 +651,8 @@ def getValueExpenseWithType(branch,date,type):
         branch__in=branch,
         period = datetime.strptime(date, "%Y-%m").strftime("%m/%Y"),
         type = type
+    ).values('type').annotate(
+        value=-Sum('value')
     )
     return expense
 
@@ -656,3 +675,160 @@ def getTotalExpensesMonthType(branch):
         total=-Sum('value')
     ).order_by('period')[:6]
     return expenses
+
+def HoraExtras(request):
+    return render(request, 'pages/hora_extra.html',context={
+        "value": getSumByGroup()
+    })
+    
+def lastSixMonths():
+    today = datetime.now()
+    today = today.replace(day=1)
+    months = []
+    months.append(today.strftime("%Y-%m-%d"))
+    previous_month = today.replace(day=1) - timedelta(days=1)
+    for _ in range(5):
+        previous_month -= timedelta(days=28)
+        previous_month = previous_month.replace(day=1)
+        months.append(previous_month.strftime("%Y-%m-%d"))
+    return months[::-1]
+
+def getSumByGroup():
+    month = lastSixMonths()
+    grupos = GroupEvents.objects.all()
+    dados = []
+    for grupo in grupos:
+        
+        events = EventsByGroup.objects.filter(
+            group = grupo
+        )
+        event_id = events.values_list('event', flat=True)
+        value = EventHistory.objects.filter(
+            event__id__in=event_id,
+            competence__in=month
+        ).values('competence').annotate(total=Sum('value'))
+        dados.append({
+            'name': grupo,
+            'values': value
+            })
+    
+    return dados
+
+def groupEvents(request):
+    if request.POST.get('save') is not None:
+        name = request.POST.get('group')
+        return render(request, 'pages/group_events.html',context={
+            "response": setGroupEvents(name),
+            "groups": GroupEvents.objects.all()
+        })
+    elif request.POST.get('action') == "remove":
+        response = delGroupEvents(request.POST.get('id'))
+        return render(request, 'pages/group_events.html',context={
+            "groups": GroupEvents.objects.all(),
+            "response": response
+        })
+    elif request.POST.get('action') == "edit":
+        return render(request, 'pages/group_events.html',context={
+            "groups": GroupEvents.objects.all(),
+            "response": HttpResponse(content="Editar", status=200)
+        })
+    elif request.POST.get('action') == "list":
+        listEventos = getEventsNotByGroup(request.POST.get('id'))
+        eventos = listGroupEvents(request.POST.get('id'))
+        grupo = getGroupEvents(request.POST.get('id'))
+        return render(request, 'pages/group_events.html',context={
+            "groups": GroupEvents.objects.all(),
+            "eventos": eventos,
+            "listEventos":listEventos,
+            "list": True,
+            "grupo": grupo,
+            "response": HttpResponse(content="Listado", status=200)
+        })
+    elif request.POST.get('listaGrupo') == "salvar":
+        setEventosInGroup(request.POST.get('grupo_id'),request.POST.getlist('eventos[]'))        
+        listEventos = getEventsNotByGroup(request.POST.get('grupo_id'))
+        eventos = listGroupEvents(request.POST.get('grupo_id'))
+        grupo = getGroupEvents(request.POST.get('grupo_id'))
+        return render(request, 'pages/group_events.html',context={
+            "groups": GroupEvents.objects.all(),
+            "eventos": eventos,
+            "listEventos":listEventos,
+            "list": True,
+            "grupo": grupo,
+            "response": HttpResponse(content="Listado", status=200)
+        })
+    elif request.POST.get('listaGrupo') == "remover":
+        delEventsByGroup(request.POST.get('idGrupo'))
+        listEventos = getEventsNotByGroup(request.POST.get('grupo_id'))
+        eventos = listGroupEvents(request.POST.get('grupo_id'))
+        grupo = getGroupEvents(request.POST.get('grupo_id'))
+        return render(request, 'pages/group_events.html',context={
+            "groups": GroupEvents.objects.all(),
+            "eventos": eventos,
+            "listEventos":listEventos,
+            "list": True,
+            "grupo": grupo,
+            "response": HttpResponse(content="Listado", status=200)
+        })
+    else:
+        return render(request, 'pages/group_events.html',context={
+            "groups": GroupEvents.objects.all(),
+            "response": HttpResponse(content="Success", status=200)
+        })
+
+def delEventsByGroup(id):
+    if EventsByGroup.objects.filter(id=id).exists():
+        EventsByGroup.objects.filter(id=id).delete()
+        return HttpResponse(content="Removido", status=204)
+    else:
+        return HttpResponse(content="Error: not found", status=400)
+
+def setEventosInGroup(grupo,eventos):
+    for evento in eventos:
+        e = Events.objects.get(id=evento)
+        g = GroupEvents.objects.get(id=grupo)
+        ebg = EventsByGroup(
+            group = g,
+            event = e
+        )
+        try:
+            ebg.save()
+            print("Salvo")
+        except Exception as e:
+            print(e)
+def getEventsNotByGroup(id):
+    exclude = EventsByGroup.objects.all()
+    eventos = Events.objects.filter(~Q(id__in=exclude))
+    return eventos
+
+def listGroupEvents(id):
+    eventos = EventsByGroup.objects.filter(group=GroupEvents.objects.get(id=id))
+    return eventos
+
+def getGroupEvents(id):
+    group = GroupEvents.objects.get(id=id)
+    return group
+
+def delGroupEvents(id):
+    if GroupEvents.objects.filter(id=id).exists():
+        group = GroupEvents.objects.filter(id=id)
+        group.delete()
+        return HttpResponse(content="Removido", status=204)
+    else:
+        return HttpResponse(content="Error: not found", status=400)
+
+def setGroupEvents(name):
+    group = GroupEvents(
+        name = name
+    )
+    if not GroupEvents.objects.filter(name = name).exists():
+        try:
+            group.save()
+            reponse = HttpResponse("Salvo", status=201)
+            return reponse
+        except Exception as e:
+            reponse = HttpResponse("Erro:"+ e, status=400)
+            return reponse
+    else:
+        reponse = HttpResponse("Já existe", status=400)
+        return reponse

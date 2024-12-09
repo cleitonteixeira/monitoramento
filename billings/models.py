@@ -113,7 +113,7 @@ class Events(models.Model):
     created_at = models.DateField(auto_now_add=True)
     updated_at = models.DateField(auto_now=True)
     def __str__(self):
-        return f"{self.cod} - {self.name} - {self.typeEvent} - {self.demonstrative}"
+        return self.name
     
     class Meta:
         ordering = ['cod']
@@ -137,3 +137,29 @@ class EventHistory(models.Model):
         ordering = ['competence','cooperator','event']
         verbose_name_plural = 'histórico de eventos'
         verbose_name = 'histórico de evento'
+
+class GroupEvents(models.Model):
+    name = models.CharField(max_length=50)
+    created_at = models.DateField(auto_now_add=True)
+    updated_at = models.DateField(auto_now=True)
+    def __str__(self):
+        return f"{self.name}"
+    
+    class Meta:
+        ordering = ['name']
+        verbose_name_plural = 'grupos de eventos'
+        verbose_name = 'grupo de eventos'
+
+class EventsByGroup(models.Model):
+    group = models.ForeignKey(GroupEvents, on_delete=models.SET_NULL, null=True)
+    event = models.ForeignKey(Events, on_delete=models.SET_NULL, null=True)
+    created_at = models.DateField(auto_now_add=True)
+    updated_at = models.DateField(auto_now=True)
+    
+    def __str__(self):
+        return f"{self.id}"
+    
+    class Meta:
+        ordering = ['group','event']
+        verbose_name_plural = 'eventos por grupos'
+        verbose_name = 'evento por grupo'
