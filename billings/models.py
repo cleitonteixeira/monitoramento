@@ -151,11 +151,10 @@ class GroupEvents(models.Model):
         verbose_name = 'grupo de eventos'
 
 class EventsByGroup(models.Model):
-    group = models.ForeignKey(GroupEvents, on_delete=models.SET_NULL, null=True)
+    group = models.ForeignKey(GroupEvents, on_delete=models.CASCADE)
     event = models.ForeignKey(Events, on_delete=models.SET_NULL, null=True)
     created_at = models.DateField(auto_now_add=True)
     updated_at = models.DateField(auto_now=True)
-    
     def __str__(self):
         return f"{self.id}"
     

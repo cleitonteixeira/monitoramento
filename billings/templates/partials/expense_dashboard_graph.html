@@ -1,0 +1,39 @@
+<div class="card">
+    <div class="card-header text-card-title">
+        Despesas
+    </div>
+    <div class="card-body">
+        <div class="card-text">
+            <div>
+                <canvas id="graficD"></canvas>
+            </div>
+        </div>        
+    </div>
+</div>
+<script>    
+    const ctxD = document.getElementById('graficD').getContext('2d');
+
+    new Chart(ctxD, {
+      type: 'bar',
+      data: {
+        datasets: [{
+          label: 'Em reais',
+          data: 
+          [
+          {% for expense in expenseHistory %}
+            {{expense.total|floatformat:"0"}},
+          {% endfor %}
+          ],
+          borderWidth: 1,
+          borderColor: 'rgba(220,53,69,0.99)',
+          backgroundColor: 'rgba(220,53,69,0.8)',
+        }],
+    
+        labels: [
+        {% for expense in expenseHistory %}
+            "{{expense.period}}",
+          {% endfor %}
+        ],
+      }
+    });
+  </script>

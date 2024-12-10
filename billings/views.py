@@ -1,13 +1,16 @@
 from django.shortcuts import render,redirect
+from django.template.loader import get_template
 from django.db.models import Sum, Q
 from django.db.models.functions import TruncMonth
-from django.http import HttpResponse,JsonResponse
+from django.http import HttpResponse, JsonResponse
 from flask import Flask, request
 from datetime import datetime, timedelta
+from reportlab.pdfgen import canvas
 from .models import *
 import pandas as pd
 import calendar
 import openpyxl
+
 
 from . import completaBD
 from . import completDRE
@@ -698,7 +701,6 @@ def getSumByGroup():
     grupos = GroupEvents.objects.all()
     dados = []
     for grupo in grupos:
-        
         events = EventsByGroup.objects.filter(
             group = grupo
         )
@@ -711,7 +713,6 @@ def getSumByGroup():
             'name': grupo,
             'values': value
             })
-    
     return dados
 
 def groupEvents(request):
@@ -733,7 +734,7 @@ def groupEvents(request):
             "response": HttpResponse(content="Editar", status=200)
         })
     elif request.POST.get('action') == "list":
-        listEventos = getEventsNotByGroup(request.POST.get('id'))
+        listEventos = getEventsNotByGroup()
         eventos = listGroupEvents(request.POST.get('id'))
         grupo = getGroupEvents(request.POST.get('id'))
         return render(request, 'pages/group_events.html',context={
@@ -746,7 +747,7 @@ def groupEvents(request):
         })
     elif request.POST.get('listaGrupo') == "salvar":
         setEventosInGroup(request.POST.get('grupo_id'),request.POST.getlist('eventos[]'))        
-        listEventos = getEventsNotByGroup(request.POST.get('grupo_id'))
+        listEventos = getEventsNotByGroup()
         eventos = listGroupEvents(request.POST.get('grupo_id'))
         grupo = getGroupEvents(request.POST.get('grupo_id'))
         return render(request, 'pages/group_events.html',context={
@@ -759,7 +760,7 @@ def groupEvents(request):
         })
     elif request.POST.get('listaGrupo') == "remover":
         delEventsByGroup(request.POST.get('idGrupo'))
-        listEventos = getEventsNotByGroup(request.POST.get('grupo_id'))
+        listEventos = getEventsNotByGroup()
         eventos = listGroupEvents(request.POST.get('grupo_id'))
         grupo = getGroupEvents(request.POST.get('grupo_id'))
         return render(request, 'pages/group_events.html',context={
@@ -796,8 +797,9 @@ def setEventosInGroup(grupo,eventos):
             print("Salvo")
         except Exception as e:
             print(e)
-def getEventsNotByGroup(id):
+def getEventsNotByGroup():
     exclude = EventsByGroup.objects.all()
+    exclude = exclude.values_list('event_id', flat=True)
     eventos = Events.objects.filter(~Q(id__in=exclude))
     return eventos
 
@@ -832,3 +834,216 @@ def setGroupEvents(name):
     else:
         reponse = HttpResponse("Já existe", status=400)
         return reponse
+
+
+def dashboard_faturamento(request):
+    date = calcMonth(datetime.now().strftime("%Y-%m"))
+    if request.POST.get('iDate') is not None:
+        date = datetime.strptime(request.POST.get('iDate'), '%Y-%m')
+        return render(request, 'pages/dashboard_faturamento.html', context={
+            'fTotal': getFaturamento(date),
+            'cTotal': getCustos(date),
+            'data': date,
+            'billingHistory': getBillingHistory(),
+            'billingType': getBillingType(date),
+            'totalRevenue': getTotalRevenue(monthsYear()),
+            'variation':variation(date),
+            'variationYear':variationYear(monthsYear()),
+            'tributos': getTributos(date),
+            'segmentacao': getBillingTypeSeg()
+        })
+    else:
+        return render(request, 'pages/dashboard_faturamento.html', context={
+            'fTotal': getFaturamento(date),
+            'cTotal': getCustos(date),
+            'data': date,
+            'billingHistory': getBillingHistory(),
+            'billingType': getBillingType(date),
+            'totalRevenue': getTotalRevenue(monthsYear()),
+            'variation':variation(date),
+            'variationYear':variationYear(monthsYear()),
+            'tributos': getTributos(date),
+            'segmentacao': getBillingTypeSeg()
+        })
+        
+def reportFaturamento(request):
+    date = datetime.strptime(request.POST.get('iDate'), '%Y-%m')
+    template = get_template('pages/report_faturamento.html')
+    context = {
+        'billingHistory': getBillingHistory(),
+        'expenseHistory': getExpenseHistory(),
+        'billingType': getBillingType(date),
+        'expenseType': getExpenseType(date),
+        'totalRevenue': getTotalRevenue()
+    }
+    html = template.render(context)
+    
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = 'attachment; filename="report.pdf"'
+    
+    pdf = canvas.Canvas(response)
+    pdf.drawString(100, 750, html)  # Renderiza o HTML no PDF
+
+    pdf.showPage()
+    pdf.save()
+
+    return response
+
+def variation(date):
+    variation = []
+    pMonth = calcMonth(date.strftime("%Y-%m"))
+    pMonth = getFaturamento(pMonth)
+    aMonth = getFaturamento(date)
+    variation.append({
+        'month': calcMonth(date.strftime("%Y-%m")),
+        'value':calc_percent(aMonth[0]['total'], pMonth[0]['total'])
+    })
+    return variation
+
+def pYear(months):
+    pYear = datetime.now().year
+    pYear = pYear - 1
+    pMonths = []
+    for month in months:
+        month, year = month.split('/')
+        date = datetime.strptime(f"{month}/{pYear}", "%m/%Y")
+        pMonths.append(date.strftime("%m/%Y"))
+    return pMonths
+
+def variationYear(months):
+    variation = []
+    pYear1 = pYear(months)
+    pYears = getTotalRevenue(pYear1)
+    aYears = getTotalRevenue(months)
+    pYear2 = datetime.now().year
+    pYea2r = pYear2 - 1
+    variation.append({
+        'year': pYea2r,
+        'value':calc_percent(aYears['total'], pYears['total'])
+    })
+    return variation
+
+def monthsYear():
+    today = datetime.now()
+    firstMonth = today.replace(month=1)
+    firstMonth = firstMonth.replace(day=1)
+    months = []
+    months.append(firstMonth.strftime("%m/%Y"))
+    for _ in range(11):
+        firstMonth += timedelta(days=31)
+        months.append(firstMonth.strftime("%m/%Y"))
+    return months
+
+def getTotalRevenue(months):
+    receita = FinancialTransactions.objects.filter(
+        type__in=['VENDA DE SERVICOS','VENDA DE PRODUTOS','REVENDA DE PRODUTOS','VENDAS CANCELADAS'],
+        period__in=months
+    ).aggregate(total=Sum('value'))
+    return receita
+
+def getNetRevenue(date):
+    receita = getFaturamento(date)
+    custos = getCustos(date)
+    return receita[0]['total'] - custos[0]['total']
+
+def getFaturamento(date):
+    faturamento = FinancialTransactions.objects.filter(
+        period = date.strftime("%m/%Y"),
+        type__in=['VENDA DE SERVICOS','VENDA DE PRODUTOS','REVENDA DE PRODUTOS','VENDAS CANCELADAS']
+    ).values('period').annotate(total=Sum('value'))
+    return faturamento
+
+def getCustos(date):
+    custos = FinancialTransactions.objects.filter(
+        ~Q(type__in = ['VENDA DE SERVICOS','VENDA DE PRODUTOS','REVENDA DE PRODUTOS']),
+        period = date.strftime("%m/%Y")
+    ).values('period').annotate(total=-Sum('value'))
+    return custos
+
+def getTributos(date):
+    print(date)
+    tributos = FinancialTransactions.objects.filter(
+        type__in = ['IMPOSTOS'],
+        period = date.strftime("%m/%Y")
+    ).values('period').annotate(total=-Sum('value'))
+    return tributos
+
+def getBillingHistory():
+    month = last6Months()
+    faturamento = FinancialTransactions.objects.filter(
+        type__in=['VENDA DE SERVICOS','VENDA DE PRODUTOS','REVENDA DE PRODUTOS','VENDAS CANCELADAS'],
+        period__in=month
+    ).values('period').annotate(total=Sum('value'))
+    return faturamento
+
+def getExpenseHistory():
+    month = last6Months()
+    despesas = FinancialTransactions.objects.filter(
+        ~Q(type__in=['VENDA DE SERVICOS','VENDA DE PRODUTOS','REVENDA DE PRODUTOS']),
+        period__in=month
+    ).values('period').annotate(total=-Sum('value'))
+    return despesas
+
+def getBillingType(date):
+    billing = []
+    type = TypeBranch.objects.filter(
+        ~Q(name='Backoffice')
+    )
+    for t in type:
+        branchs = Branch.objects.filter(
+            type = t
+        )
+        branch_id = branchs.values_list('id', flat=True)
+        faturamento = FinancialTransactions.objects.filter(
+            type__in=['VENDA DE SERVICOS','VENDA DE PRODUTOS','REVENDA DE PRODUTOS','VENDAS CANCELADAS'],
+            period = date.strftime("%m/%Y"),
+            branch__in=branch_id
+        ).aggregate(total=Sum('value'))
+        billing.append({
+            'name': t.name,
+            'total': faturamento['total']
+        })
+    return billing
+
+
+
+def getBillingTypeSeg():
+    month = last6Months()
+    billing = []
+    type = TypeBranch.objects.filter(
+        ~Q(name='Backoffice')
+    )
+    for t in type:
+        branchs = Branch.objects.filter(
+            type = t
+        )
+        branch_id = branchs.values_list('id', flat=True)
+        faturamento = FinancialTransactions.objects.filter(
+            type__in=['VENDA DE SERVICOS','VENDA DE PRODUTOS','REVENDA DE PRODUTOS'],
+            period__in = month,
+            branch__in=branch_id
+        ).values('period').annotate(total=Sum('value'))
+        billing.append({
+            'name': t.name,
+            'total': faturamento
+        })
+    return billing
+
+def getExpenseType(date):
+    expense = []
+    type = TypeBranch.objects.all()
+    for t in type:
+        branchs = Branch.objects.filter(
+            type = t
+        )
+        branch_id = branchs.values_list('id', flat=True)
+        despesas = FinancialTransactions.objects.filter(
+            ~Q(type__in=['VENDA DE SERVICOS','VENDA DE PRODUTOS','REVENDA DE PRODUTOS']),
+            period = date.strftime("%m/%Y"),
+            branch__in=branch_id
+        ).aggregate(total=-Sum('value'))
+        expense.append({
+            'name': t.name,
+            'total': despesas['total']
+        })
+    return expense

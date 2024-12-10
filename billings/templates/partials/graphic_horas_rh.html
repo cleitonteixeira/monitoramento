@@ -17,7 +17,7 @@
       data: {
         labels: [
         {% for v1 in v.values %}
-          '{{ v1.competence|date:"d/m/Y" }}',
+          '{{ v1.competence|date:"m/Y" }}',
         {% endfor %}
         ],
         datasets: [

@@ -1,0 +1,59 @@
+<div class="card">
+    <div class="card-header text-card-title">
+      Evolução do Faturamento Mensal
+    </div>
+    <div class="card-body">
+        <div class="card-text">
+            <div>
+                <canvas id="graficG"></canvas>
+            </div>
+        </div>        
+    </div>
+</div>
+{{totalRevenueSeg.0.months}}
+<script>    
+    const ctx = document.getElementById('graficG').getContext('2d');
+
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: [
+        {% for month in months %}
+            "{{month}}",
+          {% endfor %}
+        ],
+        datasets: [
+        {% for total in totalRevenueSeg %}
+          {
+            label: '{{total.name}}',
+            data: [
+            {% for tot in total.total %}
+              {{tot.total|floatformat:"0"}},
+            {% endfor %}
+            ],
+            {% if total.name == 'Agricola' %}
+            backgroundColor:'rgba(22,219,156,0.8)',
+            borderColor:'rgba(22,219,156,0.99)',
+            {% elif total.name == 'Site' %}
+            backgroundColor:'rgba(22,91,219,0.8)',
+            borderColor:'rgba(22,91,219,0.99)',
+            {% else %}
+            backgroundColor:'rgba(22,216,219,0.8)',
+            borderColor:'rgba(22,216,219,0.99)',
+            {% endif %}
+          },
+          {% endfor %}
+
+        ],
+        
+      },
+      options: {
+        scales: {
+          y: {
+              beginAtZero: true,
+              stacked: true
+          }
+        }
+      },
+    });
+  </script>

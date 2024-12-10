@@ -1,0 +1,86 @@
+{% extends "global/base.html" %}
+{% block title %}Dashboard | {% endblock title %}
+{% block content %}
+{% include "partials/menu.html" %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<div class="container-fluid">
+    <div class="row">
+        <div class="resumo mt-2">
+            <div class="row">
+                <div class="col-3">
+                    <div class="card" style="height: 100%;">
+                        <div class="card-body d-flex flex-column justify-content-center align-items-center">
+                            {% include "partials/form_month.html" %}
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="row">
+                        <div class="col-6 text-center">
+                            <div class="card bg-success text-white" style="">
+                                <div class="card-body d-flex flex-column justify-content-center align-items-center">
+                                    <div class="card-text">
+                                        <h4 class="text-nowrap">
+                                            <strong>Faturamento: {{ data|date:"m/Y" }}</strong>
+                                        </h4>
+                                        <h5>
+                                            R$ <strong>{{ fTotal.0.total|floatformat:"2g" }}</strong>
+                                        </h5>
+                                        <p class="text-nowrap">
+                                            <small>Comparado a <strong>{{variation.0.month|date:"m/Y"}}</strong>:
+                                                {% if variation.0.value > 0 %} <i class="fas fa-angle-double-up"></i>{% else %} <i class="fas fa-angle-double-down"></i>{% endif %}
+                                                {{variation.0.value}}% 
+                                            </small>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6 text-center">
+                            <div class="card bg-light text-dark" style="height: 100%;">
+                                <div class="card-body d-flex flex-column justify-content-center align-items-center">
+                                    <div class="card-text text-nowrap">
+                                        <p>
+                                            <strong>Acumulado Ano</strong>
+                                        </p>
+                                        <p>
+                                            R$ <strong>{{ totalRevenue.total|floatformat:"2g" }}</strong>
+                                        </p>
+                                    </div>        
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-3 text-center">
+                    <div class="card bg-light text-dark" style="height: 100%;">
+                        <div class="card-body d-flex flex-column justify-content-center align-items-center">
+                            <div class="card-text text-nowrap">
+                                <p>
+                                    <strong>Imposto Sobre Faturamento</strong>
+                                </p>
+                                <p>
+                                    R$ <strong>{{tributos.0.total|floatformat:"2g"}}</strong>
+                                </p>
+                            </div>        
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="w-100 mb-2"></div>
+
+        <div class="graphics">
+            <div class="row">
+                <div class="col-3">
+                    {% include "partials/billing_dashboard_type.html" %}
+                </div>
+                <div class="col-6">
+                    {% include "partials/billing_dashboard_graph.html" %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
