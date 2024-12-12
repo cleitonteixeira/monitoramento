@@ -247,14 +247,14 @@ def calc_percent (last,second_last):
 
 def home (request):
     return render(request, 'pages/home.html', context={
-        'invoices': values
+        'invoices': 'a'
     })
 
 def invoices (request):
     data = datetime.now()
     return render(request, 'pages/invoices.html', context={
         'data':data,
-        'invoices': values
+        'invoices': 'a'
     })
 
 def invoice (request, id):
@@ -314,28 +314,6 @@ def getRevenueListType():
         total=Sum('value')
     )
     return revenue
- 
-def revenue(request):
-    data = calcMonth(datetime.now().strftime("%Y-%m"))
-    if request.POST.get('data') is not None:
-        data = datetime.strptime(request.POST.get('data'), '%Y-%m')
-        return render(request, 'pages/revenue.html',context={
-            'revenue': getTotalRevenueDate(request.POST.get('data')),
-            'percent': getPercentRevenue(request.POST.get('data')),
-            'revenue_list': getRevenueListMonth(),
-            'revenue_list_type': getRevenueListType(),
-            'months': last6Months(),
-            'data': data
-        })
-    else:
-        return render(request, 'pages/revenue.html',context={
-            'revenue': getTotalRevenueDate(data.strftime("%Y-%m")),
-            'percent': getPercentRevenue(data.strftime("%Y-%m")),
-            'revenue_list': getRevenueListMonth(),
-            'revenue_list_type': getRevenueListType(),
-            'months': last6Months(),
-            'data': data
-        })
 
 def getItensDRE(date):
     itens =  FinancialTransactions.objects.filter(
@@ -1047,3 +1025,8 @@ def getExpenseType(date):
             'total': despesas['total']
         })
     return expense
+
+
+
+def dashboard_requisicao(request):
+    return render(request, 'pages/dashboard_requisicao.html')
