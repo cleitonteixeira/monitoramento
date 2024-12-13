@@ -26,27 +26,28 @@
             }
         </style>
         <div class="col-6 mt-2">
-            <div class="table-responsive table-cr">
-                <table class="table table-bordered table-sm table-striped">
-                    <thead>
-                        <tr>
-                            <th class="p-3 mb-2 bg-secondary text-white">ID</th>
-                            <th class="p-3 mb-2 bg-secondary text-white">CODIGO</th>
-                            <th class="p-3 mb-2 bg-secondary text-white">NOME</th>
-                            <th class="p-3 mb-2 bg-secondary text-white">TIPO</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for cr in crs %}
-                        <tr>
-                            <td>{{cr.id}}</td>
-                            <td>{{cr.code}}</td>
-                            <td>{{cr.name}}</td>
-                            <td>{{cr.type.name}}</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+            <div class="row">
+                <div class="col">
+                    <form action="" method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="operador" value="sincronize">
+                        <button class="btn btn-sm btn-outline-success" type="submit">Sincronizar Operador</button>
+                    </form>
+                </div>
+                <div class="col">
+                    <form action="" method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="filial" value="sincronize">
+                        <button class="btn btn-sm btn-outline-success" type="submit">Sincronizar Filiais/CR</button>
+                    </form>
+                </div>
+                <div class="col">
+                    <form action="" method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="rc" value="sincronize">
+                        <button class="btn btn-sm btn-outline-success" type="submit">Sincronizar RC</button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>

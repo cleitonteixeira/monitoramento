@@ -8,7 +8,7 @@ class TypeBranch(models.Model):
     created_at = models.DateField(auto_now_add=True)
     updated_at = models.DateField(auto_now=True)
     def __str__(self):
-        return f"{self.id} - {self.name}"
+        return f"{self.name}"
     
     class Meta:
         ordering = ['name']
@@ -22,7 +22,7 @@ class Branch(models.Model):
     created_at = models.DateField(auto_now_add=True)
     updated_at = models.DateField(auto_now=True)
     def __str__(self):
-        return f"{self.code} - {self.name} - {self.type.name}"
+        return f"{self.code} - {self.name} - {self.type}"
     
     class Meta:
         ordering = ['code']
@@ -162,3 +162,88 @@ class EventsByGroup(models.Model):
         ordering = ['group','event']
         verbose_name_plural = 'eventos por grupos'
         verbose_name = 'evento por grupo'
+        
+class Operador(models.Model):
+    name = models.CharField(max_length=50)
+    cod = models.CharField(max_length=12, unique=True)
+    created_at = models.DateField(auto_now_add=True)
+    updated_at = models.DateField(auto_now=True)
+    def __str__(self):
+        return f"{self.cod} - {self.name}"
+    
+    class Meta:
+        ordering = ['name']
+        verbose_name_plural = 'operadores'
+        verbose_name = 'operador'
+        
+class Requisicao(models.Model):
+    branch_solicitacao = models.ForeignKey(Branch, on_delete=models.SET_NULL, null=True, related_name="branch_solicitacao")
+    branch_destino = models.ForeignKey(Branch, on_delete=models.SET_NULL, null=True, related_name="branch_destino")
+    operador = models.ForeignKey(Operador, on_delete=models.SET_NULL, null=True, related_name="operador")
+    nr_solicitacao = models.CharField(max_length=10)
+    data_solicitacao = models.DateField()
+    qtd_itens = models.IntegerField()
+    justificativa = models.CharField(max_length=50)
+    status = models.CharField(max_length=50, default="AGUARDANDO ATENDIMENTO")
+    inicio_atendimento = models.BooleanField(default=False)
+    operador_atendimento = models.ForeignKey(Operador, on_delete=models.SET_NULL, null=True, related_name="operador_atendimento")
+    dh_inicio_atendimento = models.DateTimeField(null=True)
+    fim_atendimento = models.BooleanField(default=False)
+    operador_fim_atendimento = models.ForeignKey(Operador, on_delete=models.SET_NULL, null=True, related_name="operador_fim_atendimento")
+    dh_fim_atendimento = models.DateTimeField(null=True)
+    pagamento = models.BooleanField(default=False)
+    dh_pagamento = models.DateTimeField(null=True)
+    finalizada = models.BooleanField(default=False)
+    dh_finalizada = models.DateTimeField(null=True)
+    created_at = models.DateField(auto_now_add=True)
+    updated_at = models.DateField(auto_now=True)
+    def __str__(self):
+        return f"{self.nr_solicitacao} - {self.data_solicitacao} - {self.qtd_itens} - {self.justificativa} - {self.status}"
+    
+    class Meta:
+        ordering = ['data_solicitacao','branch_solicitacao','nr_solicitacao']
+        verbose_name_plural = 'requisições'
+        verbose_name = 'requisição'
+
+class ClassProduto(models.Model):
+    name = models.CharField(max_length=50)
+    cod = models.CharField(max_length=12, unique=True)
+    created_at = models.DateField(auto_now_add=True)
+    updated_at = models.DateField(auto_now=True)
+    def __str__(self):
+        return f"{self.name}"
+    
+    class Meta:
+        ordering = ['name']
+        verbose_name_plural = 'classes de produtos'
+        verbose_name = 'classe de produto'
+ 
+class Produtos(models.Model):
+    name = models.CharField(max_length=50)
+    cod = models.CharField(max_length=12, unique=True)
+    unidade = models.CharField(max_length=4)
+    classification = models.ForeignKey(ClassProduto, on_delete=models.SET_NULL, null=True)
+    created_at = models.DateField(auto_now_add=True)
+    updated_at = models.DateField(auto_now=True)
+    def __str__(self):
+        return f"{self.cod} - {self.name}"
+    
+    class Meta:
+        ordering = ['name']
+        verbose_name_plural = 'produtos'
+        verbose_name = 'produto'
+
+class ItensRequisicao(models.Model):
+    requisicao = models.ForeignKey(Requisicao, on_delete=models.CASCADE)
+    item = models.CharField(max_length=30)
+    produto = models.ForeignKey(Produtos, on_delete=models.SET_NULL, null=True)
+    qtd = models.FloatField()
+    created_at = models.DateField(auto_now_add=True)
+    updated_at = models.DateField(auto_now=True)
+    def __str__(self):
+        return f"{self.requisicao.nr_solicitacao} - {self.item}"
+    
+    class Meta:
+        ordering = ['requisicao','item']
+        verbose_name_plural = 'itens de requisições'
+        verbose_name = 'item de requisição'

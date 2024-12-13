@@ -14,6 +14,7 @@ import openpyxl
 
 from . import completaBD
 from . import completDRE
+from . import attBanco
 
 def ExpenseDataCreate(data):
     print (data)
@@ -386,6 +387,26 @@ def expenses_cr(request):
         return render(request, 'pages/expenses_cr.html',context={
             'crs' : Branch.objects.all()
         })
+        
+def SincOperador():
+    operador = attBanco.consultaOperador()
+    for op in operador:
+        if not Operador.objects.filter(cod=op[0]).exists():
+            Operador.objects.create(cod=op[0],name=op[1])
+            print("Salvo")
+        else:
+            Operador.objects.filter(cod=op[0]).update(name=op[1])
+            print("Atualizado")
+
+def SincBranch():
+    filiais = attBanco.consultaFiliais()
+    for fil in filiais:
+        if not Branch.objects.filter(code=fil[0]).exists():
+            Branch.objects.create(code=fil[0],name=fil[1])
+            print("Salvo")
+        else:
+            Branch.objects.filter(code=fil[0]).update(name=fil[1])
+            print("Atualizado")
     
 def sincronize(request):
     date = datetime.now()
@@ -393,6 +414,21 @@ def sincronize(request):
         SincEvents(request.FILES['file'])
         return render(request, 'pages/sincronizar.html', context={
             'crs' : Branch.objects.all(),
+            'date': date
+        })
+    elif request.POST.get('operador') == 'sincronize':
+        SincOperador()
+        return render(request, 'pages/sincronizar.html', context={
+            'date': date
+        })
+    elif request.POST.get('rc') == 'sincronize':
+        SincRC()
+        return render(request, 'pages/sincronizar.html', context={
+            'date': date
+        })
+    elif request.POST.get('filial') == 'sincronize':
+        SincBranch()
+        return render(request, 'pages/sincronizar.html', context={
             'date': date
         })
     elif request.POST.get('sinc') == 'sinc_colaborador':
@@ -431,8 +467,16 @@ def sincronize(request):
             'date': date
         })
 def ConvertDate(date):
+    print(date)
     try:
         return datetime.strptime(date, "%d/%m/%Y").strftime("%Y-%m-%d")
+    except (ValueError, TypeError):
+        return None
+
+def ConvertDateTime(date):
+    print(date)
+    try:
+        return datetime.strptime(date, "%d/%m/%Y %H:%M:%S").strftime("%Y-%m-%d %H:%M:%S")
     except (ValueError, TypeError):
         return None
 
@@ -983,8 +1027,6 @@ def getBillingType(date):
         })
     return billing
 
-
-
 def getBillingTypeSeg():
     month = last6Months()
     billing = []
@@ -1026,7 +1068,22 @@ def getExpenseType(date):
         })
     return expense
 
-
-
 def dashboard_requisicao(request):
-    return render(request, 'pages/dashboard_requisicao.html')
+    return render(request, 'pages/dashboard_requisicao.html', context={
+        'requisicao': Requisicao.objects.all().order_by('data_solicitacao','branch_solicitacao','nr_solicitacao')
+    })
+    
+def SincRC():
+    rec = attBanco.consultaRc()
+    for r in rec:
+        rc = Requisicao(
+            branch_solicitacao = Branch.objects.get(code=r[0]),
+            branch_destino = Branch.objects.get(code=r[1]),
+            operador = Operador.objects.get(cod=r[4]),
+            nr_solicitacao = r[2],
+            data_solicitacao = r[3],
+            qtd_itens = r[5],
+            justificativa = r[6],
+        )
+        if not Requisicao.objects.filter(nr_solicitacao=r[2]).exists():
+            rc.save()

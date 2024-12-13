@@ -2,10 +2,37 @@
 {% block title %}Dashboard | {% endblock title %}
 {% block content %}
 {% include "partials/menu.html" %}
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <div class="container-fluid">
     <div class="row">
-        
+        <div class="table-resposive mt-2">
+            <table id="requisicao1" class="table table-bordered table-sm table-striped text-nowrap">
+                <thead>
+                    <tr>
+                        <th>FILIAL</th>
+                        <th>SOLICITANTE</th>
+                        <th>Nº RC</th>
+                        <th>DT. SOLICITAÇÃO</th>
+                        <th>QTD. ITENS</th>
+                        <th>STATUS</th>
+                        <th>AÇÃO</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for rc in requisicao %}
+                    <tr>
+                        <td>{{rc.branch_destino.code}}-{{rc.branch_destino.name}}</td>
+                        <td>{{rc.operador.name}}</td>
+                        <td>{{rc.nr_solicitacao}}</td>
+                        <td>{{rc.data_solicitacao|date:"d/m/Y"}}</td>
+                        <td>{{rc.qtd_itens}}</td>
+                        <td>{{rc.status}}</td>
+                        <td><button type="button" class="btn btn-sm btn-outline-primary"><i class="fas fa-tasks"></i></button></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
+
 {% endblock content %}

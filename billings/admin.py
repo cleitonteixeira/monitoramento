@@ -37,3 +37,11 @@ class GroupEventsAdmin(admin.ModelAdmin):
 @admin.register(EventsByGroup)
 class EventsByGroupAdmin(admin.ModelAdmin):
     ...
+    
+@admin.register(Operador)
+class OperadorAdmin(admin.ModelAdmin):
+    ...
+    
+@admin.register(Requisicao)
+class RequisicaoAdmin(admin.ModelAdmin):
+    ...
