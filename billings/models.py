@@ -180,6 +180,7 @@ class Requisicao(models.Model):
     branch_solicitacao = models.ForeignKey(Branch, on_delete=models.SET_NULL, null=True, related_name="branch_solicitacao")
     branch_destino = models.ForeignKey(Branch, on_delete=models.SET_NULL, null=True, related_name="branch_destino")
     operador = models.ForeignKey(Operador, on_delete=models.SET_NULL, null=True, related_name="operador")
+    dh_aprovacao = models.DateTimeField(null=True)
     nr_solicitacao = models.CharField(max_length=10)
     data_solicitacao = models.DateField()
     qtd_itens = models.IntegerField()
@@ -207,7 +208,7 @@ class Requisicao(models.Model):
 
 class ClassProduto(models.Model):
     name = models.CharField(max_length=50)
-    cod = models.CharField(max_length=12, unique=True)
+    code = models.CharField(max_length=12, unique=True)
     created_at = models.DateField(auto_now_add=True)
     updated_at = models.DateField(auto_now=True)
     def __str__(self):
@@ -220,13 +221,13 @@ class ClassProduto(models.Model):
  
 class Produtos(models.Model):
     name = models.CharField(max_length=50)
-    cod = models.CharField(max_length=12, unique=True)
+    code = models.CharField(max_length=12, unique=True)
     unidade = models.CharField(max_length=4)
     classification = models.ForeignKey(ClassProduto, on_delete=models.SET_NULL, null=True)
     created_at = models.DateField(auto_now_add=True)
     updated_at = models.DateField(auto_now=True)
     def __str__(self):
-        return f"{self.cod} - {self.name}"
+        return f"{self.code} - {self.name} - {self.classification.name} - {self.unidade}"
     
     class Meta:
         ordering = ['name']
@@ -235,15 +236,15 @@ class Produtos(models.Model):
 
 class ItensRequisicao(models.Model):
     requisicao = models.ForeignKey(Requisicao, on_delete=models.CASCADE)
-    item = models.CharField(max_length=30)
     produto = models.ForeignKey(Produtos, on_delete=models.SET_NULL, null=True)
     qtd = models.FloatField()
+    dt_utiliza = models.DateField(null=True)
     created_at = models.DateField(auto_now_add=True)
     updated_at = models.DateField(auto_now=True)
     def __str__(self):
-        return f"{self.requisicao.nr_solicitacao} - {self.item}"
+        return f"{self.requisicao.nr_solicitacao} - {self.produto.name} - {self.qtd}"
     
     class Meta:
-        ordering = ['requisicao','item']
+        ordering = ['requisicao','produto']
         verbose_name_plural = 'itens de requisições'
         verbose_name = 'item de requisição'

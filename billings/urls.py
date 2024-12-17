@@ -16,5 +16,6 @@ urlpatterns = [
     path('sincronize/', views.sincronize, name="sincronize"),
     path('history/', views.history, name="history"),
     path('hora_extra/', views.HoraExtras, name="hora_extra"),
+    path('requisicao/<int:id>', views.requisicao, name="requisicao"),
     path('group_events/', views.groupEvents, name="group_events"),
 ] 

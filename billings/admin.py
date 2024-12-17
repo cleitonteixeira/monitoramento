@@ -45,3 +45,15 @@ class OperadorAdmin(admin.ModelAdmin):
 @admin.register(Requisicao)
 class RequisicaoAdmin(admin.ModelAdmin):
     ...
+
+@admin.register(ClassProduto)
+class ClassProdutoAdmin(admin.ModelAdmin):
+    ...
+
+@admin.register(Produtos)
+class ProdutosAdmin(admin.ModelAdmin):
+    ...
+
+@admin.register(ItensRequisicao)
+class ItensRequisicaoAdmin(admin.ModelAdmin):
+    ...

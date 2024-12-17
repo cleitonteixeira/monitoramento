@@ -431,6 +431,16 @@ def sincronize(request):
         return render(request, 'pages/sincronizar.html', context={
             'date': date
         })
+    elif request.POST.get('classe') == 'sincronize':
+        CreateClasses()
+        return render(request, 'pages/sincronizar.html', context={
+            'date': date
+        })
+    elif request.POST.get('produto') == 'sincronize':
+        CreateProd()
+        return render(request, 'pages/sincronizar.html', context={
+            'date': date
+        })
     elif request.POST.get('sinc') == 'sinc_colaborador':
         SincColaborador(request.FILES['file'])
         return render(request, 'pages/sincronizar.html', context={
@@ -466,6 +476,41 @@ def sincronize(request):
             'crs' : Branch.objects.all(),
             'date': date
         })
+        
+def CreateProd():
+    produtos = attBanco.CriaProdutos()
+    for prod in produtos:
+        p = Produtos(
+            code = prod[1],
+            name = prod[2],
+            classification = ClassProduto.objects.get(code=prod[0]),
+            unidade = prod[3]
+        )
+        try:    
+            if not Produtos.objects.filter(code=prod[1]).exists():
+                p.save()
+                print("Salvo")
+            else:
+                print("Ja Existe")
+        except Exception as e:
+            print(e)
+
+def CreateClasses():
+    classes = attBanco.CriaClasse()
+    for cl in classes:
+        c = ClassProduto(
+            code = cl[0],
+            name = cl[1]
+        )
+        try:    
+            if not ClassProduto.objects.filter(code=cl[0]).exists():
+                c.save()
+                print("Salvo")
+            else:
+                print("Ja Existe")
+        except Exception as e:
+            print(e)
+        
 def ConvertDate(date):
     print(date)
     try:
@@ -1070,7 +1115,7 @@ def getExpenseType(date):
 
 def dashboard_requisicao(request):
     return render(request, 'pages/dashboard_requisicao.html', context={
-        'requisicao': Requisicao.objects.all().order_by('data_solicitacao','branch_solicitacao','nr_solicitacao')
+        'requisicao': Requisicao.objects.all().order_by('dh_aprovacao')
     })
     
 def SincRC():
@@ -1080,10 +1125,30 @@ def SincRC():
             branch_solicitacao = Branch.objects.get(code=r[0]),
             branch_destino = Branch.objects.get(code=r[1]),
             operador = Operador.objects.get(cod=r[4]),
+            dh_aprovacao = r[7],
             nr_solicitacao = r[2],
             data_solicitacao = r[3],
             qtd_itens = r[5],
             justificativa = r[6],
         )
-        if not Requisicao.objects.filter(nr_solicitacao=r[2]).exists():
+        if not Requisicao.objects.filter(
+                    nr_solicitacao=r[2],
+                    branch_solicitacao = Branch.objects.get(code=r[0]),
+                    branch_destino = Branch.objects.get(code=r[1])).exists():
             rc.save()
+            itens = attBanco.consultaItensRc(rc.nr_solicitacao, rc.branch_solicitacao, rc.branch_destino)
+            for i in itens:
+                item = ItensRequisicao(
+                    requisicao = rc,
+                    produto = Produtos.objects.get(code=i[1]),
+                    qtd = i[2],
+                    dt_utiliza = ConvertDate(i[3])
+                )
+                item.save()
+            
+
+def requisicao(request, id):
+    return render(request, 'pages/requisicao.html', context={
+        'rc': Requisicao.objects.get(id=id),
+        'itens': ItensRequisicao.objects.filter(requisicao=id)
+    })
