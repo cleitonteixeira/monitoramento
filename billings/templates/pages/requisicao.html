@@ -1,12 +1,13 @@
 {% extends "global/base.html" %}
-{% block title %}Receita | {% endblock title %}
+{% block title %}RC {{ rc.nr_solicitacao }} | {% endblock title %}
 {% block content %}
 {% include "partials/menu.html" %}
 <div class="container-fluid">
     <div class="row">
-        
-        <div class="text-nowrap mt-2">{% include "partials/requisicao.html" %}</div>
-        
+        <div class="mt-2 col-4">{% include "partials/requisicao.html" %}</div>
+        <div class="col-8 mt-2">
+            {% include "partials/requisicao_prod.html" %}
+        </div>
     </div>
 </div>
 {% endblock content %}

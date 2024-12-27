@@ -44,3 +44,6 @@
     max-height: 30rem !important;
     overflow-y: auto !important;
 }
+.bg-inicio{
+    background-color: #62856b !important;
+}

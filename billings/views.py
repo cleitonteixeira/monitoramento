@@ -1115,10 +1115,13 @@ def getExpenseType(date):
 
 def dashboard_requisicao(request):
     return render(request, 'pages/dashboard_requisicao.html', context={
-        'requisicao': Requisicao.objects.all().order_by('dh_aprovacao')
+        'requisicao': Requisicao.objects.filter(
+            finalizada=False,
+            fim_atendimento=False).order_by('dh_aprovacao')
     })
     
 def SincRC():
+    CreateProd()
     rec = attBanco.consultaRc()
     for r in rec:
         rc = Requisicao(
@@ -1142,13 +1145,49 @@ def SincRC():
                     requisicao = rc,
                     produto = Produtos.objects.get(code=i[1]),
                     qtd = i[2],
-                    dt_utiliza = ConvertDate(i[3])
+                    dt_utiliza = i[3]
                 )
                 item.save()
             
-
 def requisicao(request, id):
-    return render(request, 'pages/requisicao.html', context={
-        'rc': Requisicao.objects.get(id=id),
-        'itens': ItensRequisicao.objects.filter(requisicao=id)
-    })
+    if request.POST.get('status') is not None:
+        return render(request, 'pages/requisicao.html', context={
+            'rc': updateRequisicao(id, request.POST.get('status'), request.user),
+            'itens': ItensRequisicao.objects.filter(requisicao=id),
+            'detail': True
+        })
+    else:
+        return render(request, 'pages/requisicao.html', context={
+            'rc': Requisicao.objects.get(id=id),
+            'itens': ItensRequisicao.objects.filter(requisicao=id),
+            'detail': True
+        })
+
+def updateRequisicao(id, status, user):
+    rc = Requisicao.objects.get(id=id)
+    if status == "Inicio":
+        rc.status = "EM ATENDIMENTO"
+        rc.inicio_atendimento = True
+        rc.operador_atendimento = Operador.objects.get(user=user)
+        rc.dh_inicio_atendimento = datetime.now()
+        rc.save()
+    elif status == "Fim":
+        rc.status = "AGUARDANDO PAGAMENTO"
+        rc.fim_atendimento = True
+        rc.operador_fim_atendimento = Operador.objects.get(user=user)
+        rc.dh_fim_atendimento = datetime.now()
+        rc.save()
+    elif status == "Pago":
+        rc.status = "PAGO"
+        rc.pago = True
+        rc.operador_pagamento = Operador.objects.get(user=user)
+        rc.dh_pagamento = datetime.now()
+        rc.save()
+    elif status == "Finalizado":
+        rc.status = "FINALIZADO"
+        rc.finalizada = True
+        rc.dh_finalizada = datetime.now()
+        rc.save()
+    else:
+        print("Falha na atualização")
+    return rc

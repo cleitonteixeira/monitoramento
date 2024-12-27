@@ -1,5 +1,5 @@
 {% extends "global/base.html" %}
-{% block title %}Dashboard | {% endblock title %}
+{% block title %}Requisições | {% endblock title %}
 {% block content %}
 {% include "partials/menu.html" %}
 <div class="container-fluid">
@@ -37,13 +37,11 @@
             </table>
         </div> {% endcomment %}
 
-        <div class="container-fluid">
-            <div class="row">
+        
                 {% for rc in requisicao %}
                 <div class="col-3 mt-2 text-nowrap">{% include "partials/requisicao.html" %}</div>
                 {% endfor %}
-            </div>
-        </div>
+           
     </div>
 </div>
 

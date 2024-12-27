@@ -1,48 +1,56 @@
-<div class="card m-auto">
+<div class="card m-auto {% if not detail and rc.inicio_atendimento %}bg-warning{% elif not detail%}bg-danger{% endif %}">
+    {% if itens %}
     <div class="card-header">
-        {{rc.nr_solicitacao}}-{{ rc.branch_destino.code }} 
+        <strong>{{ rc.branch_destino.code }} - {{ rc.branch_destino.name }}</strong>
     </div>
+    {% endif %}
     <div class="card-body">
         <div class="card-text">
-            <div class="row">
-                <div class="col">
-                    <p class="card-title">{{ rc.branch_destino.code }} - {{ rc.branch_destino.name }}</p>
-                    <p class="card-text">
-                        <small>Justificativa: <span class="text-muted text-uppercase">{{ rc.justificativa }}</span></small>
-                    </p>
-                    <p>Hora da Aprovação: {{ rc.dh_aprovacao|date:"d/m/Y H:i" }}</p>
-                    <p>Status: {{ rc.status }}</p>
-                    {% if not itens %}
-                    <a href="{% url "billings:requisicao" rc.id %}" class="btn btn-sm btn-outline-secondary">VERIFICAR</a>
-                    {% endif %}
+            {% if itens %}
+            <div class="list-group-item list-group-item-action">              
+                <div class="d-flex w-100 justify-content-between">
+                    <h5 class="mb-2">{{rc.nr_solicitacao}} - {{ rc.branch_destino.code }}</h5>
+                    <small>{{rc.data_solicitacao|date:"d/m/Y"}}</small>
                 </div>
-                {% if itens %}
-                <div class="col">
-                    <div class="table-responsive">
-                        <table class="table table-bordered table-striped table-sm">
-                            <thead>
-                                <tr>
-                                    <th class="bg-secondary text-white">ID</th>
-                                    <th class="bg-secondary text-white">PRODUTO</th>
-                                    <th title="Quantidade" class="bg-secondary text-white">QTD.</th>
-                                    <th class="bg-secondary text-white">UND</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for item in itens %}
-                                <tr>
-                                    <td>{{item.produto.code}}</td>
-                                    <td>{{item.produto.name}}</td>
-                                    <td title="Quantidade">{{item.qtd|floatformat:"2g"}}</td>
-                                    <td>{{item.produto.unidade}}</td>
-                                </tr>                        
-                                {% endfor %}
-                            </tbody>
-                        </table>
+                <p class="mb-2 text-uppercase">
+                    {{ rc.justificativa }}
+                </p>
+                <p class="mb-1"><strong>Aprovada em:</strong> {{ rc.dh_aprovacao|date:"d/m/Y H:i" }}</p>
+                <p class="mb-1"><strong>Status:</strong> {{ rc.status }}</p>
+                <p class="mb-1"><strong>Solicitante:</strong> {{rc.operador.name}}</p>
+                {% if rc.inicio_atendimento %}
+                <p class="mb-1"><strong>Início Atendimento:</strong> {{rc.dh_inicio_atendimento|date:"d/m/Y H:i"}}</p>
+                <p class="mb-1"><strong>Responsável:</strong> {{rc.operador_atendimento.name}}</p>
+                <form action="" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="status" value="Fim">
+                    <button type="submit" class="btn btn-outline-danger btn-sm">FINALIZAR</button>
+                </form>
+                {% else %}
+                <form action="" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="status" value="Inicio">
+                    <button type="submit" class="btn btn-outline-success btn-sm">INICIAR</button>
+                </form>
+                {% endif %}
+            </div>
+            {% else %}
+            <div class="list-group">
+                <a href="{% url "billings:requisicao" rc.id %}" class="list-group-item list-group-item-action text-small">
+                
+                    <div class="d-flex w-100 justify-content-between">
+                        <h5 class="mb-1">{{rc.nr_solicitacao}} - {{ rc.branch_destino.code }}</h5>
+                        <small>{{rc.data_solicitacao|date:"d/m/Y"}}</small>
                     </div>
-                </div>
+                    <p class="mb-1">{{ rc.branch_destino.code }} - {{ rc.branch_destino.name }}</p>
+                    <p class="mb-1 text-uppercase">
+                        {{ rc.justificativa }}
+                    </p>
+                    <p class="mb-1">APROVADA EM: {{ rc.dh_aprovacao|date:"d/m/Y H:i" }}</p>
+                    <small>Status: {{ rc.status }} {% if rc.inicio_atendimento %}- {{ rc.operador_atendimento.user.first_name }}{% endif %}</small> 
+                </a>
             </div>
             {% endif %}
-        </div>        
+        </div>
     </div>
 </div>
