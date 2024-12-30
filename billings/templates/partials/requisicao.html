@@ -47,7 +47,7 @@
                         {{ rc.justificativa }}
                     </p>
                     <p class="mb-1">APROVADA EM: {{ rc.dh_aprovacao|date:"d/m/Y H:i" }}</p>
-                    <small>Status: {{ rc.status }} {% if rc.inicio_atendimento %}- {{ rc.operador_atendimento.user.first_name }}{% endif %}</small> 
+                    <p class="mb-1">Status: {{ rc.status }} {% if rc.inicio_atendimento %}- {{ rc.operador_atendimento.user.first_name }}{% endif %}</p> 
                 </a>
             </div>
             {% endif %}
